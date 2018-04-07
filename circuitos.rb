@@ -199,39 +199,51 @@ end
 def f_operações_lógicas(tverdade,text_content,valores,bits)
 	# analisando e chamando operações lógicas
 	for c in 0..text_content.size-1
-		if text_content[c].include? " AND" 
+		if text_content[c].include? " AND" #OKAY
 			text_line = text_content[c]
 			entradas = f_verifica_entradas(text_line,valores)
 			montante = f_and(valores,@bits,entradas)
 			f_montante_sx_armazena(montante)
 			#f_write(tverdade,@bits,montante)
 		else
-			if text_content[c].include? " OR" 
-				resultante = f_or(valores)
-				f_write(tverdade,@bits,resultante)
+			if text_content[c].include? " OR" #OKAY
+				text_line = text_content[c]
+				entradas = f_verifica_entradas(text_line,valores)
+				montante = f_or(valores,@bits,entradas)
+				f_montante_sx_armazena(montante)
+				#f_write(tverdade,@bits,resultante)
 			else
-				if text_content[c].include? " XOR"
-					resultante = f_xor(valores)
-					f_write(tverdade,@bits,resultante)
+				if text_content[c].include? " XOR" #OKAY
+					text_line = text_content[c]
+					entradas = f_verifica_entradas(text_line,valores)
+					montante = f_xor(valores,@bits,entradas)
+					f_montante_sx_armazena(montante)
+					#f_write(tverdade,@bits,resultante)
 				else
-					if text_content[c].include? " NAND"
-						#resultante_inicial = f_and(valores)
-						#resultante = f_nand(resultante_inicial)
+					if text_content[c].include? " NAND" #OKAY
+						text_line = text_content[c]
+						entradas = f_verifica_entradas(text_line,valores)
+						montante = f_and(valores,@bits,entradas)
+						montante_final = f_nand(montante,@bits)
+						f_montante_sx_armazena(montante_final)
 						#f_write(tverdade,@bits,resultante)	
 					else
-						if text_content[c].include? " NOR"
-							#resultante_inicial = f_or(valores)
-							#resultante = f_nor(resultante_inicial)
+						if text_content[c].include? " NOR" #OKAY
+							text_line = text_content[c]
+							entradas = f_verifica_entradas(text_line,valores)
+							montante = f_or(valores,@bits,entradas)
+							montante_final = f_nor(montante,@bits)
+							f_montante_sx_armazena(montante_final)
 							#f_write(tverdade,@bits,resultante)	
 						else
-							if text_content[c].include? " NOT"
+							if text_content[c].include? " NOT" #OKAY
 								text_line = text_content[c] 
 								entradas = f_verifica_entradas(text_line,valores)
 								montante = f_not(valores,@bits,entradas)
 								f_montante_sx_armazena(montante)
 								#f_write(tverdade,@bits,montante)
 							else
-								if text_content[c].include? "F ="
+								if text_content[c].include? "F =" #OKAY
 									entradas = "F ="
 									resultante = f_montante_sx(entradas)
 									f_write(tverdade,@bits,resultante)
@@ -337,9 +349,8 @@ def f_and(valores,bits,entradas)
 	else
 		aux_x = []
 		aux_y = []
-		puts @XY
-		aux_x = @XY[0]
-		aux_y = @XY[1]
+		aux_x << @XY[0]
+		aux_y << @XY[1]
 		for c in 0..lines-1
 		   if aux_x[c] == "1" and aux_y[c] == "1" 
 		   		sd << "1"
@@ -350,29 +361,71 @@ def f_and(valores,bits,entradas)
 		puts sd
 		return sd
 	end
-
 end
 
-def f_or(valores)
-	sd = []
-	aux = 0
-	
-	#case bits
-
-
-	for c in 0..3
-	   e1 = valores[aux].to_s
-	   aux+= 1
-	   e2 = valores[aux].to_s
-	   aux+= 1
-	   if e1 == "1" or e2 == "1" 
-	   		sd << "1"
-	   else
-	   		sd << "0"
-	   end
+def f_or(valores,bits,entradas)
+	sd = [] # array de saida
+	sx = [] # array no caso de montantes Sx
+	params = entradas
+	ent = ""
+	if entradas.include? "S" and entradas.include? "E"
+	    sx = f_montante_sx(entradas)
+	    for i in 0..entradas.size-2
+		    ent << entradas[i]			
+		end
+		ent << "x"
+		params = ent
+		puts "#{params}"
 	end
-	puts sd
-	sd
+	lines = 2**bits.to_i # quantidade de repetições
+
+	case params
+	when "E1E2"
+		for c in 0..lines-1
+		   if @E1[c] == "1" or @E2[c] == "1" 
+		   		sd << "1"
+		   else
+		   		sd << "0"
+		   end
+		end
+		puts sd
+		return sd
+	#when "E1E3" ...
+	when "E1Sx" 
+		for c in 0..lines-1
+		   if @E1[c] == "1" or sx[c] == "1" 
+		   		sd << "1"
+		   else
+		   		sd << "0"
+		   end
+		end
+		puts sd
+		return sd
+	when "E2Sx"
+		for c in 0..lines-1
+		   if @E2[c] == "1" or sx[c] == "1" 
+		   		sd << "1"
+		   else
+		   		sd << "0"
+		   end
+		end
+		puts sd
+		return sd
+	else
+		aux_x = []
+		aux_y = []
+		aux_x << @XY[0]
+		aux_y << @XY[1]
+		for c in 0..lines-1
+		   if aux_x[c] == "1" or aux_y[c] == "1" 
+		   		sd << "1"
+		   else
+		   		sd << "0"
+		   end
+		end
+		puts sd
+		return sd
+	end
 end
 
 #OBS: ERRO
@@ -392,27 +445,101 @@ def f_not(valores,bits,entradas)
 	sd
 end
 
-def f_xor(valores)
+def f_xor(valores,bits,entradas)
 	sd = []
 	aux = 0
 	#case bits
-
-
-	for c in 0..3
-	   e1 = valores[aux].to_s
-	   aux+= 1
-	   e2 = valores[aux].to_s
-	   aux+= 1
-	   if (e1 == "1" and e2 == "1") or (e1 == "0" and e2 == "0")
-	   		sd << "1"
-	   else
-	   		sd << "0"
-	   end
+	sd = [] # array de saida
+	sx = [] # array no caso de montantes Sx
+	params = entradas
+	ent = ""
+	if entradas.include? "S" and entradas.include? "E"
+	    sx = f_montante_sx(entradas)
+	    for i in 0..entradas.size-2
+		    ent << entradas[i]			
+		end
+		ent << "x"
+		params = ent
+		puts "#{params}"
 	end
-	puts sd
-	#sd
+	lines = 2**bits.to_i # quantidade de repetições
+
+	case params
+	when "E1E2"
+		for c in 0..lines-1
+		   	if (@E1[c] == "1" and @E2[c] == "1") or (@E1[c] == "0" and @E2[c] == "0")
+	   			sd << "1"
+	  		else
+	   			sd << "0"
+	   		end
+		end
+		puts sd
+		return sd
+	#when "E1E3" ...
+	when "E1Sx" 
+		for c in 0..lines-1
+		   	if (@E1[c] == "1" and sx[c] == "1") or (@E1[c] == "0" and sx[c] == "0")
+	   			sd << "1"
+	  		else
+	   			sd << "0"
+	   		end
+		end
+		puts sd
+		return sd
+	when "E2Sx"
+		for c in 0..lines-1
+		   	if (@E2[c] == "1" and sx[c] == "1") or (@E2[c] == "0" and sx[c] == "0")
+	   			sd << "1"
+	  		else
+	   			sd << "0"
+	   		end
+		end
+		puts sd
+		return sd
+	else
+		aux_x = []
+		aux_y = []
+		aux_x << @XY[0]
+		aux_y << @XY[1]
+		for c in 0..lines-1
+		   if (aux_x[c] == "1" and aux_y[c] == "1") or (aux_x[c] == "0" and aux_y[c] == "0") 
+		   		sd << "1"
+		   else
+		   		sd << "0"
+		   end
+		end
+		puts sd
+		return sd
+	end
 end
 
+def f_nor(montante,bits)
+	sd = []
+	lines = 2**bits.to_i
+
+	for c in 0..lines-1
+		if montante[c] == "1"
+			sd << "0"
+		else
+			sd << "1"
+		end
+	end
+	sd
+end
+
+def f_nand(montante,bits)
+	sd = []
+	lines = 2**bits.to_i
+
+	for c in 0..lines-1
+		if montante[c] == "1"
+			sd << "0"
+		else
+			sd << "1"
+		end
+	end
+	sd
+end
 
 def f_montante_sx_armazena(montante)
 	@Sx << montante
@@ -429,11 +556,11 @@ def f_montante_sx(entradas)
 			resultante = @Sx.size-1
 			return @Sx[resultante.to_i]
 		else
+			@XY = []
 			posição_y = entradas[entradas.size-1]
 			posição_x = entradas[entradas.size-3]
-			@XY[0] = @Sx[posição_y.to_i-1]
-			@XY[1] = @Sx[posição_x.to_i-1]
-
+			@XY[0] = @Sx[posição_x.to_i-1]
+			@XY[1] = @Sx[posição_y.to_i-1]
  		end
  	end
 end
