@@ -1,6 +1,14 @@
 #require_relative 'Class_strings'
 require_relative 'manipulacao_txt'
 
+@E1 = []
+@E2 = []
+@E3 = []
+@E4 = []
+@E5 = []
+@Sx = []
+@XY = []
+
 # retornar número de portas (string)
 def f_num_portas(text_content)
 	str_portas = text_content[0] 
@@ -18,7 +26,7 @@ def f_num_bits (text_content)
 	bits
 end
 
-
+#Constroi tabela verdade
 def f_one_bit
 	tverdade = ["0","1"]
 	tverdade
@@ -50,6 +58,44 @@ def f_three_bits
 	tverdade
 end
 
+def f_four_bits
+	tverdade = []
+	for e1 in 0..1
+		for e2 in 0..1
+			for e3 in 0..1
+				for e4 in 0..1
+					line = ""
+					line << "#{e1}  #{e2}  #{e3}  #{e4}  "
+					tverdade << line
+				end
+			end
+		end
+	end
+	puts tverdade
+	tverdade
+end
+
+def f_five_bits
+	tverdade = []
+	for e1 in 0..1
+		for e2 in 0..1
+			for e3 in 0..1
+				for e4 in 0..1
+					for e5 in 0..1
+						line = ""
+						line << "#{e1}  #{e2}  #{e3}  #{e4}  #{e5}  "
+						tverdade << line
+					end
+				end
+			end
+		end
+	end
+	puts tverdade
+	tverdade
+end
+
+
+
 #gera tabela verdade de acordo com os bits
 def f_gera_tv(bits)
 	tverdade = []
@@ -60,96 +106,251 @@ def f_gera_tv(bits)
 			tverdade = f_two_bits
 		when '3'
 			tverdade = f_three_bits
+		when '4'
+			tverdade = f_four_bits
+		when '5'
+			tverdade = f_five_bits
 		else
-			puts "Número de BITS não suportado: v1.1.0 : Somente até 3 bits de entrada"		
+			puts "Número de BITS não suportado: v2.1.0 : Somente até 5 bits de entrada"		
 		end
 	tverdade
+end
+
+#verifica entradas e retorna um array somente da entrada dos params e uma string com os params >> f_operações...
+def f_verifica_entradas(text_line,valores)
+	entradas = ""
+	entrada_buf = text_line.size-3 # pegar o elemento de Sx
+	puts text_line
+	
+	case valores.size
+	#1 bit
+	when 2
+		if text_line.include? "E1" 
+			@E1 = valores
+			#resultante = f_not(@e1)
+			return entradas << "E1"
+		else
+			if text_line.include? "(S"
+				entradas << "S"
+				entradas << text_line[entrada_buf]
+				puts entradas
+				return entradas
+			end
+		end
+	#2 bits obs: Possibilidade: (E1,E1) (E2,E2) // possibilidade (Sx) 
+	when 8
+		if text_line.include? "E1" and text_line.include? "E2" #(E1,E2)
+			for c in 0..valores.size-1
+				if c%2 == 0
+					@E1 << valores[c]
+				else
+					@E2 << valores[c]
+				end
+			end
+			return entradas << "E1E2"
+		else
+			if text_line.include? "E1" and text_line.include? ",S" #(E1,Sx)
+				for c in 0..valores.size-1
+					if c%2 == 0
+						@E1 << valores[c]
+					end
+				end
+				entradas << "E1S"
+				entradas << text_line[entrada_buf-1]
+				return f_verifica_entradas
+			else
+				if text_line.include? "E2" and text_line.include? ",S" #(E2,Sx)
+					for c in 0..valores.size-1
+						if c%2 != 0
+							@E2 << valores[c]
+						end
+					end
+					entradas << "E2S"
+					entradas << text_line[entrada_buf-1]
+					return entradas
+				else
+					if text_line.include? ",S" and text_line.include? "(S" #(Sx,Sy)
+						entradas << "S"
+						entradas << text_line[entrada_buf-4]
+						entradas << "S"
+						entradas << text_line[entrada_buf-1]
+						puts entradas
+						return entradas
+					end
+				end
+			end
+		end
+	when 24
+		@E1 = []
+		@E2 = []
+		@E3 = []
+	when 64
+		@E1 = []
+		@E2 = []
+		@E3 = []
+		@E4 = []
+	when 160
+
+	end
 end
 
 
 # ERRO : IDENTIFICAÇÃO DA OPERAÇÃO
 def f_operações_lógicas(tverdade,text_content,valores,bits)
-	e = "AND"
-	ou = "OR"
-	não = "NOT"
-	n_e = "NAND"
-	n_ou = "NOR"
-	x_ou = "XOR"
-
 	# analisando e chamando operações lógicas
 	for c in 0..text_content.size-1
-		if text_content[c].include? e 
-			resultante = f_and(valores)
-			f_write(tverdade,@bits,resultante)
+		if text_content[c].include? " AND" 
+			text_line = text_content[c]
+			entradas = f_verifica_entradas(text_line,valores)
+			montante = f_and(valores,@bits,entradas)
+			f_montante_sx_armazena(montante)
+			#f_write(tverdade,@bits,montante)
 		else
-			if text_content[c].include? ou 
+			if text_content[c].include? " OR" 
 				resultante = f_or(valores)
 				f_write(tverdade,@bits,resultante)
 			else
-				if text_content[c].include? x_ou 
+				if text_content[c].include? " XOR"
 					resultante = f_xor(valores)
 					f_write(tverdade,@bits,resultante)
 				else
-					if text_content[c].include? não
-						if @bits == 1
-							resultante = f_not(valores)
-							f_write(tverdade,@bits,resultante)
+					if text_content[c].include? " NAND"
+						#resultante_inicial = f_and(valores)
+						#resultante = f_nand(resultante_inicial)
+						#f_write(tverdade,@bits,resultante)	
+					else
+						if text_content[c].include? " NOR"
+							#resultante_inicial = f_or(valores)
+							#resultante = f_nor(resultante_inicial)
+							#f_write(tverdade,@bits,resultante)	
 						else
-							next
+							if text_content[c].include? " NOT"
+								text_line = text_content[c] 
+								entradas = f_verifica_entradas(text_line,valores)
+								montante = f_not(valores,@bits,entradas)
+								f_montante_sx_armazena(montante)
+								#f_write(tverdade,@bits,montante)
+							else
+								if text_content[c].include? "F ="
+									entradas = "F ="
+									resultante = f_montante_sx(entradas)
+									f_write(tverdade,@bits,resultante)
+
+								else
+									next	
+								end
+							end
 						end		
 					end
 				end
 			end
 		end
 	end
-
-	#... falta operações lógicas case : operações_lógicas.include? e,ou,não,n_e ...#
-	
-	#resultante = f_and(valores)	
-	#resultante = f_or(valores)
-	#resultante = f_not(valores) OBS ERRO: saida referente ao valores(array)
-	#resultante = f_xor(valores)
-
-	# CASE WHEN => OPREAÇAO LÓGICA (f_and ...)
 end
 
 def f_valores_verdade(tverdade,bits)
 	 valores = []
-	 if @bits == 1
-	 	return tverdade
-	 else 
-		# Quebrando a tabela verdade em Fixnum
+		# Quebrando a tabela verdade em string
 		for c in 0..tverdade.size-1
-		 	tv = tverdade[c].split " "
-		 	valores << tv[0].to_s
-			valores << tv[1].to_s
+		 	case @bits
+		 	when '1'
+		 		puts "#{tverdade}"
+		 		return tverdade
+		 	when '2'
+		 		tv = tverdade[c].split "  "
+		 		valores << tv[0].to_s
+				valores << tv[1].to_s
+		 	
+			when '3'
+				tv = tverdade[c].split "  "
+			 	valores << tv[0].to_s
+				valores << tv[1].to_s
+				valores << tv[2].to_s
+		 	when  '4'
+		 		tv = tverdade[c].split "  "
+			 	valores << tv[0].to_s
+				valores << tv[1].to_s
+				valores << tv[2].to_s
+				valores << tv[3].to_s
+			else
+				tv = tverdade[c].split "  "
+			 	valores << tv[0].to_s
+				valores << tv[1].to_s
+				valores << tv[2].to_s
+				valores << tv[3].to_s
+				valores << tv[4].to_s
+		 	end
 		end
 		puts "#{valores}"
 		puts "#{valores[0].class}"
 		valores
-	end
 end
 
-def f_and(valores)
-	sd = []
-	aux = 0
-	
-	#case bits
-
-
-	for c in 0..3
-	   e1 = valores[aux].to_s
-	   aux+= 1
-	   e2 = valores[aux].to_s
-	   aux+= 1
-	   if e1 == "1" and e2 == "1" 
-	   		sd << "1"
-	   else
-	   		sd << "0"
-	   end
+def f_and(valores,bits,entradas)
+	sd = [] # array de saida
+	sx = [] # array no caso de montantes Sx
+	params = entradas
+	ent = ""
+	if entradas.include? "S" and entradas.include? "E"
+	    sx = f_montante_sx(entradas)
+	    for i in 0..entradas.size-2
+		    ent << entradas[i]			
+		end
+		ent << "x"
+		params = ent
+		puts "#{params}"
 	end
-	puts sd
-	sd
+	lines = 2**bits.to_i # quantidade de repetições
+
+	case params
+	when "E1E2"
+		for c in 0..lines-1
+		   if @E1[c] == "1" and @E2[c] == "1" 
+		   		sd << "1"
+		   else
+		   		sd << "0"
+		   end
+		end
+		puts sd
+		return sd
+	#when "E1E3" ...
+	when "E1Sx" 
+		for c in 0..lines-1
+		   if @E1[c] == "1" and sx[c] == "1" 
+		   		sd << "1"
+		   else
+		   		sd << "0"
+		   end
+		end
+		puts sd
+		return sd
+	when "E2Sx"
+		for c in 0..lines-1
+		   if @E2[c] == "1" and sx[c] == "1" 
+		   		sd << "1"
+		   else
+		   		sd << "0"
+		   end
+		end
+		puts sd
+		return sd
+	else
+		aux_x = []
+		aux_y = []
+		puts @XY
+		aux_x = @XY[0]
+		aux_y = @XY[1]
+		for c in 0..lines-1
+		   if aux_x[c] == "1" and aux_y[c] == "1" 
+		   		sd << "1"
+		   else
+		   		sd << "0"
+		   end
+		end
+		puts sd
+		return sd
+	end
+
 end
 
 def f_or(valores)
@@ -175,10 +376,13 @@ def f_or(valores)
 end
 
 #OBS: ERRO
-def f_not(valores)
+def f_not(valores,bits,entradas)
 	sd = []
-	for c in 0..1
-		if valores[c] == "1"
+
+	lines = 2**bits.to_i
+
+	for c in 0..lines-1
+		if @E1[c] == "1"
 			sd << "0"
 		else
 			sd << "1"
@@ -209,6 +413,32 @@ def f_xor(valores)
 	#sd
 end
 
+
+def f_montante_sx_armazena(montante)
+	@Sx << montante
+end
+
+# função que analisa o Sx
+def f_montante_sx(entradas)
+	if entradas.include? "E"
+		posição = entradas[entradas.size-1]
+		puts posição.to_i
+		return @Sx[posição.to_i-1]
+	else
+		if entradas.include? "F ="
+			resultante = @Sx.size-1
+			return @Sx[resultante.to_i]
+		else
+			posição_y = entradas[entradas.size-1]
+			posição_x = entradas[entradas.size-3]
+			@XY[0] = @Sx[posição_y.to_i-1]
+			@XY[1] = @Sx[posição_x.to_i-1]
+
+ 		end
+ 	end
+end
+
+
 #start program
 def f_main
 	text_content = f_read #text_content é um array(strs) com as entradas
@@ -223,7 +453,7 @@ def f_main
 	tverdade = f_gera_tv(@bits)
 
 
-	valores = f_valores_verdade(tverdade,@bits) #valores.class: Fixnum(array)
+	valores = f_valores_verdade(tverdade,@bits) #valores.class: string(array)
 	f_operações_lógicas(tverdade,text_content,valores,@bits)#decide qual função lógica chamar
 
 

@@ -15,7 +15,9 @@ def f_read
 		  text << line
 	 	end
 	end
+	puts "#{text}\n\n"
 	text
+
 end
 
 def f_print(text)
