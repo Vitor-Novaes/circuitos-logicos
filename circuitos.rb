@@ -181,9 +181,65 @@ def f_verifica_entradas(text_line,valores)
 			end
 		end
 	when 24
-		@E1 = []
-		@E2 = []
-		@E3 = []
+		aux2 = 1
+		aux3 = 2
+		if text_line.include? "E1" and text_line.include? "E2" #(E1,E2)
+			for c in 0..valores.size-1
+				if c%3 == 0
+					@E1 << valores[c]
+				elsif c == 1 or c == aux
+					aux2 += 3
+					@E2 << valores[c]
+				end
+			end
+			return entradas << "E1E2"
+		elsif text_line.include? "E1" and text_line.include? "E3" #(E1,E3)
+			for c in 0..valores.size-1
+				if c%3 == 0
+					@E1 << valores[c]
+				elsif c == 2 or c == aux
+					aux3 += 3
+					@E3 << valores[c]
+				end
+			end
+			return entradas << "E1E3"
+		elsif text_line.include? "E2" and text_line.include? "E3" #(E2,E3)
+			for c in 0..valores.size-1
+				if c == 1 or c == aux
+					aux2 += 3
+					@E2 << valores[c]
+				elsif c == 2 or c == aux
+					aux3 += 3
+					@E3 << valores[c]
+				end
+			end
+			return entradas << "E2E3"
+		elsif text_line.include? "E1" and text_line.include? ",S" #(E1,Sx)
+			for c in 0..valores.size-1
+				if c%2 == 0
+					@E1 << valores[c]
+				end
+			end
+			entradas << "E1S"
+			entradas << text_line[entrada_buf-1]
+			return f_verifica_entradas
+		elsif text_line.include? "E2" and text_line.include? ",S" #(E2,Sx)
+			for c in 0..valores.size-1
+				if c%2 != 0
+					@E2 << valores[c]
+				end
+			end
+			entradas << "E2S"
+			entradas << text_line[entrada_buf-1]
+			return entradas
+		elsif text_line.include? ",S" and text_line.include? "(S" #(Sx,Sy)
+			entradas << "S"
+			entradas << text_line[entrada_buf-4]
+			entradas << "S"
+			entradas << text_line[entrada_buf-1]
+			puts entradas
+			return entradas
+		end
 	when 64
 		@E1 = []
 		@E2 = []
@@ -195,12 +251,11 @@ def f_verifica_entradas(text_line,valores)
 end
 
 
-# ERRO : IDENTIFICAÇÃO DA OPERAÇÃO
 def f_operações_lógicas(tverdade,text_content,valores,bits)
 	# analisando e chamando operações lógicas
 	for c in 0..text_content.size-1
 		if text_content[c].include? " AND" #OKAY
-			text_line = text_content[c]
+			text_line = text_content[c] # pego linha de string e inicializo text_line
 			entradas = f_verifica_entradas(text_line,valores)
 			montante = f_and(valores,@bits,entradas)
 			f_montante_sx_armazena(montante)
@@ -303,7 +358,7 @@ def f_and(valores,bits,entradas)
 	sx = [] # array no caso de montantes Sx
 	params = entradas
 	ent = ""
-	if entradas.include? "S" and entradas.include? "E"
+	unless entradas.include? "(E" and entradas.include? ",E"
 	    sx = f_montante_sx(entradas)
 	    for i in 0..entradas.size-2
 		    ent << entradas[i]			
@@ -314,53 +369,131 @@ def f_and(valores,bits,entradas)
 	end
 	lines = 2**bits.to_i # quantidade de repetições
 
-	case params
-	when "E1E2"
-		for c in 0..lines-1
-		   if @E1[c] == "1" and @E2[c] == "1" 
-		   		sd << "1"
-		   else
-		   		sd << "0"
-		   end
+	case(bits)
+	when 1
+
+	when 2
+		case params
+		when "E1E2"
+			for c in 0..lines-1
+			   if @E1[c] == "1" and @E2[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1Sx" 
+			for c in 0..lines-1
+			   if @E1[c] == "1" and sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2Sx"
+			for c in 0..lines-1
+			   if @E2[c] == "1" and sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when
+			aux_x = []
+			aux_y = []
+			aux_x << @XY[0]
+			aux_y << @XY[1]
+			for c in 0..lines-1
+			   if aux_x[c] == "1" and aux_y[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
 		end
-		puts sd
-		return sd
-	#when "E1E3" ...
-	when "E1Sx" 
-		for c in 0..lines-1
-		   if @E1[c] == "1" and sx[c] == "1" 
-		   		sd << "1"
-		   else
-		   		sd << "0"
-		   end
+	when 3
+		case params
+		when "E1E2"
+			for c in 0..lines-1
+			   if @E1[c] == "1" and @E2[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+
+		when "E1E3"
+			for c in 0..lines-1
+			   if @E1[c] == "1" and @E3[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+
+		when "E2E3"
+			for c in 0..lines-1
+			   if @E2[c] == "1" and @E3[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+
+		when "E1Sx" 
+			for c in 0..lines-1
+			   if @E1[c] == "1" and sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2Sx"
+			for c in 0..lines-1
+			   if @E2[c] == "1" and sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		else
+			aux_x = []
+			aux_y = []
+			aux_x << @XY[0]
+			aux_y << @XY[1]
+			for c in 0..lines-1
+			   if aux_x[c] == "1" and aux_y[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
 		end
-		puts sd
-		return sd
-	when "E2Sx"
-		for c in 0..lines-1
-		   if @E2[c] == "1" and sx[c] == "1" 
-		   		sd << "1"
-		   else
-		   		sd << "0"
-		   end
-		end
-		puts sd
-		return sd
-	else
-		aux_x = []
-		aux_y = []
-		aux_x << @XY[0]
-		aux_y << @XY[1]
-		for c in 0..lines-1
-		   if aux_x[c] == "1" and aux_y[c] == "1" 
-		   		sd << "1"
-		   else
-		   		sd << "0"
-		   end
-		end
-		puts sd
-		return sd
+	when 4
+
+	when 5
 	end
+		
 end
 
 def f_or(valores,bits,entradas)
@@ -368,7 +501,7 @@ def f_or(valores,bits,entradas)
 	sx = [] # array no caso de montantes Sx
 	params = entradas
 	ent = ""
-	if entradas.include? "S" and entradas.include? "E"
+	unless entradas.include? "(E" and entradas.include? ",E"
 	    sx = f_montante_sx(entradas)
 	    for i in 0..entradas.size-2
 		    ent << entradas[i]			
@@ -379,53 +512,129 @@ def f_or(valores,bits,entradas)
 	end
 	lines = 2**bits.to_i # quantidade de repetições
 
-	case params
-	when "E1E2"
-		for c in 0..lines-1
-		   if @E1[c] == "1" or @E2[c] == "1" 
-		   		sd << "1"
-		   else
-		   		sd << "0"
-		   end
+	case(bits)
+	when 1
+	when 2
+		case params
+		when "E1E2"
+			for c in 0..lines-1
+			   if @E1[c] == "1" or @E2[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1Sx" 
+			for c in 0..lines-1
+			   if @E1[c] == "1" or sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2Sx"
+			for c in 0..lines-1
+			   if @E2[c] == "1" or sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		else
+			aux_x = []
+			aux_y = []
+			aux_x << @XY[0]
+			aux_y << @XY[1]
+			for c in 0..lines-1
+			   if aux_x[c] == "1" or aux_y[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
 		end
-		puts sd
-		return sd
-	#when "E1E3" ...
-	when "E1Sx" 
-		for c in 0..lines-1
-		   if @E1[c] == "1" or sx[c] == "1" 
-		   		sd << "1"
-		   else
-		   		sd << "0"
-		   end
+	when 3
+		case params
+		when "E1E2"
+			for c in 0..lines-1
+			   if @E1[c] == "1" or @E2[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+
+		when "E1E3"
+			for c in 0..lines-1
+			   if @E1[c] == "1" or @E3[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+
+		when "E2E3"
+			for c in 0..lines-1
+			   if @E2[c] == "1" or @E3[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+
+		when "E1Sx" 
+			for c in 0..lines-1
+			   if @E1[c] == "1" or sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2Sx"
+			for c in 0..lines-1
+			   if @E2[c] == "1" or sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		else
+			aux_x = []
+			aux_y = []
+			aux_x << @XY[0]
+			aux_y << @XY[1]
+			for c in 0..lines-1
+			   if aux_x[c] == "1" or aux_y[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
 		end
-		puts sd
-		return sd
-	when "E2Sx"
-		for c in 0..lines-1
-		   if @E2[c] == "1" or sx[c] == "1" 
-		   		sd << "1"
-		   else
-		   		sd << "0"
-		   end
-		end
-		puts sd
-		return sd
-	else
-		aux_x = []
-		aux_y = []
-		aux_x << @XY[0]
-		aux_y << @XY[1]
-		for c in 0..lines-1
-		   if aux_x[c] == "1" or aux_y[c] == "1" 
-		   		sd << "1"
-		   else
-		   		sd << "0"
-		   end
-		end
-		puts sd
-		return sd
+	when 4
+	when 5
 	end
+
 end
 
 #OBS: ERRO
@@ -434,6 +643,7 @@ def f_not(valores,bits,entradas)
 
 	lines = 2**bits.to_i
 
+	
 	for c in 0..lines-1
 		if @E1[c] == "1"
 			sd << "0"
@@ -453,7 +663,7 @@ def f_xor(valores,bits,entradas)
 	sx = [] # array no caso de montantes Sx
 	params = entradas
 	ent = ""
-	if entradas.include? "S" and entradas.include? "E"
+	unless entradas.include? ",E" and entradas.include? "(E"
 	    sx = f_montante_sx(entradas)
 	    for i in 0..entradas.size-2
 		    ent << entradas[i]			
@@ -463,62 +673,138 @@ def f_xor(valores,bits,entradas)
 		puts "#{params}"
 	end
 	lines = 2**bits.to_i # quantidade de repetições
+	case(bits)
+	when 1
+	when 2
+		case params
+		when "E1E2"
+			for c in 0..lines-1
+			   	if (@E1[c] == "1" and @E2[c] == "1") or (@E1[c] == "0" and @E2[c] == "0")
+		   			sd << "1"
+		  		else
+		   			sd << "0"
+		   		end
+			end
+			puts sd
+			return sd
+		when "E1Sx" 
+			for c in 0..lines-1
+			   	if (@E1[c] == "1" and sx[c] == "1") or (@E1[c] == "0" and sx[c] == "0")
+		   			sd << "1"
+		  		else
+		   			sd << "0"
+		   		end
+			end
+			puts sd
+			return sd
+		when "E2Sx"
+			for c in 0..lines-1
+			   	if (@E2[c] == "1" and sx[c] == "1") or (@E2[c] == "0" and sx[c] == "0")
+		   			sd << "1"
+		  		else
+		   			sd << "0"
+		   		end
+			end
+			puts sd
+			return sd
+		else
+			aux_x = []
+			aux_y = []
+			aux_x << @XY[0]
+			aux_y << @XY[1]
+			for c in 0..lines-1
+			   if (aux_x[c] == "1" and aux_y[c] == "1") or (aux_x[c] == "0" and aux_y[c] == "0") 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		end
+	when 3
+		case params
+		when "E1E2"
+			for c in 0..lines-1
+			   if (@E1[c] == "1" and @E2[c] == "1") or (@E2[c] == "0" and @E1[c] == "0")
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
 
-	case params
-	when "E1E2"
-		for c in 0..lines-1
-		   	if (@E1[c] == "1" and @E2[c] == "1") or (@E1[c] == "0" and @E2[c] == "0")
-	   			sd << "1"
-	  		else
-	   			sd << "0"
-	   		end
+		when "E1E3"
+			for c in 0..lines-1
+			   if (@E1[c] == "1" and @E3[c] == "1") or (@E1[c] == "0" and @E3[c] == "0")
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+
+		when "E2E3"
+			for c in 0..lines-1
+			   if (@E3[c] == "1" and @E2[c] == "1") or (@E2[c] == "0" and @E3[c] == "0")
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+
+		when "E1Sx" 
+			for c in 0..lines-1
+			   if @E1[c] == "1" or sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2Sx"
+			for c in 0..lines-1
+			   if @E2[c] == "1" or sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		else
+			aux_x = []
+			aux_y = []
+			aux_x << @XY[0]
+			aux_y << @XY[1]
+			for c in 0..lines-1
+			   if aux_x[c] == "1" or aux_y[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
 		end
-		puts sd
-		return sd
-	#when "E1E3" ...
-	when "E1Sx" 
-		for c in 0..lines-1
-		   	if (@E1[c] == "1" and sx[c] == "1") or (@E1[c] == "0" and sx[c] == "0")
-	   			sd << "1"
-	  		else
-	   			sd << "0"
-	   		end
-		end
-		puts sd
-		return sd
-	when "E2Sx"
-		for c in 0..lines-1
-		   	if (@E2[c] == "1" and sx[c] == "1") or (@E2[c] == "0" and sx[c] == "0")
-	   			sd << "1"
-	  		else
-	   			sd << "0"
-	   		end
-		end
-		puts sd
-		return sd
-	else
-		aux_x = []
-		aux_y = []
-		aux_x << @XY[0]
-		aux_y << @XY[1]
-		for c in 0..lines-1
-		   if (aux_x[c] == "1" and aux_y[c] == "1") or (aux_x[c] == "0" and aux_y[c] == "0") 
-		   		sd << "1"
-		   else
-		   		sd << "0"
-		   end
-		end
-		puts sd
-		return sd
+	when 4
+	when 5
 	end
+
 end
 
 def f_nor(montante,bits)
+	aux = []
+	aux = montante;
 	sd = []
 	lines = 2**bits.to_i
-
 	for c in 0..lines-1
-		if montante[c] == "1"
+		if (aux[c] == "1")
 			sd << "0"
 		else
 			sd << "1"
@@ -547,7 +833,7 @@ end
 
 # função que analisa o Sx
 def f_montante_sx(entradas)
-	if entradas.include? "E"
+	if entradas.include? "S" and entradas.include? "E"
 		posição = entradas[entradas.size-1]
 		puts posição.to_i
 		return @Sx[posição.to_i-1]
@@ -558,7 +844,9 @@ def f_montante_sx(entradas)
 		else
 			@XY = []
 			posição_y = entradas[entradas.size-1]
+			#puts entradas[entradas.size-1]
 			posição_x = entradas[entradas.size-3]
+			#puts entradas[entradas.size-3]
 			@XY[0] = @Sx[posição_x.to_i-1]
 			@XY[1] = @Sx[posição_y.to_i-1]
  		end
@@ -568,7 +856,7 @@ end
 
 #start program
 def f_main
-	text_content = f_read #text_content é um array(strs) com as entradas
+	text_content = f_read #text_content é um array(strs lines) com as entradas
 	portas = f_num_portas(text_content) #retornar o numero de portas
 	@bits = f_num_bits(text_content) #retorna bits do circuito
 	#f_print(text_content)

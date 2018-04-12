@@ -11,13 +11,12 @@
 %
 %S1 = NOT(E1)
 S1 = XOR(E1,E2);
-S2 = NOR(E2,S1);
-%S3 = AND(S1,S2);
+S2 = OR(E2,S1);
+S3 = AND(S1,S2);
 %S3 = AND(S1,S2);
 %S4 = NAND(S2,S3);
 %S5 = NOT(S4);
-F = S2;
-%
+F = S3;
 % A especificação das falhas é direta, indicando quais entradas ou saidas estão presas a 0 ou %a 1. 
 % Para especificar falahas nas entrada precisamos definir que Ijk é a entrada j da porta k. Por exemplo:
 %S1 = 1;
@@ -28,4 +27,3 @@ F = S2;
 %
 %
 %
-
