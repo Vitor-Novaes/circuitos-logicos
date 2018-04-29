@@ -1,13 +1,6 @@
 #require_relative 'Class_strings'
 require_relative 'manipulacao_txt'
 
-@E1 = []
-@E2 = []
-@E3 = []
-@E4 = []
-@E5 = []
-@Sx = []
-@XY = []
 
 # retornar número de portas (string)
 def f_num_portas(text_content)
@@ -180,6 +173,7 @@ def f_verifica_entradas(text_line,valores)
 				end
 			end
 		end
+	#3 bits obs : SxSy nn implementado
 	when 24
 		aux2 = 1
 		aux3 = 2
@@ -302,7 +296,6 @@ def f_operações_lógicas(tverdade,text_content,valores,bits)
 									entradas = "F ="
 									resultante = f_montante_sx(entradas)
 									f_write(tverdade,@bits,resultante)
-
 								else
 									next	
 								end
@@ -311,7 +304,8 @@ def f_operações_lógicas(tverdade,text_content,valores,bits)
 					end
 				end
 			end
-		end
+		end#Constroi tabela verdade
+
 	end
 end
 
@@ -358,7 +352,10 @@ def f_and(valores,bits,entradas)
 	sx = [] # array no caso de montantes Sx
 	params = entradas
 	ent = ""
-	unless entradas.include? "(E" and entradas.include? ",E"
+
+	cnt = entradas.count 'S'
+
+	if cnt == 1
 	    sx = f_montante_sx(entradas)
 	    for i in 0..entradas.size-2
 		    ent << entradas[i]			
@@ -366,10 +363,13 @@ def f_and(valores,bits,entradas)
 		ent << "x"
 		params = ent
 		puts "#{params}"
+	elsif cnt == 2
+		sx = f_montante_sx(entradas)
+		params = "SS"
 	end
 	lines = 2**bits.to_i # quantidade de repetições
 
-	case(bits)
+	case(bits.to_i)
 	when 1
 
 	when 2
@@ -404,7 +404,7 @@ def f_and(valores,bits,entradas)
 			end
 			puts sd
 			return sd
-		when
+		when "SS"
 			aux_x = []
 			aux_y = []
 			aux_x << @XY[0]
@@ -492,8 +492,7 @@ def f_and(valores,bits,entradas)
 	when 4
 
 	when 5
-	end
-		
+	end		
 end
 
 def f_or(valores,bits,entradas)
@@ -501,18 +500,24 @@ def f_or(valores,bits,entradas)
 	sx = [] # array no caso de montantes Sx
 	params = entradas
 	ent = ""
-	unless entradas.include? "(E" and entradas.include? ",E"
+	cnt = entradas.count 'S'
+
+	if cnt == 1
 	    sx = f_montante_sx(entradas)
 	    for i in 0..entradas.size-2
-		    ent << entradas[i]			
+		    ent << entradas[i]
 		end
 		ent << "x"
 		params = ent
 		puts "#{params}"
+	elsif cnt == 2
+		sx = f_montante_sx(entradas)
+		params = "SS"
 	end
+	
 	lines = 2**bits.to_i # quantidade de repetições
 
-	case(bits)
+	case(bits.to_i)
 	when 1
 	when 2
 		case params
@@ -546,7 +551,8 @@ def f_or(valores,bits,entradas)
 			end
 			puts sd
 			return sd
-		else
+		when "SS"
+			
 			aux_x = []
 			aux_y = []
 			aux_x << @XY[0]
@@ -634,7 +640,6 @@ def f_or(valores,bits,entradas)
 	when 4
 	when 5
 	end
-
 end
 
 #OBS: ERRO
@@ -663,7 +668,9 @@ def f_xor(valores,bits,entradas)
 	sx = [] # array no caso de montantes Sx
 	params = entradas
 	ent = ""
-	unless entradas.include? ",E" and entradas.include? "(E"
+	cnt = entradas.count "S"
+
+	if cnt == 1
 	    sx = f_montante_sx(entradas)
 	    for i in 0..entradas.size-2
 		    ent << entradas[i]			
@@ -671,9 +678,13 @@ def f_xor(valores,bits,entradas)
 		ent << "x"
 		params = ent
 		puts "#{params}"
+	elsif cnt == 2
+		sx = f_montante_sx(entradas)
+		params = "SS"
 	end
+	
 	lines = 2**bits.to_i # quantidade de repetições
-	case(bits)
+	case(bits.to_i)
 	when 1
 	when 2
 		case params
@@ -795,7 +806,6 @@ def f_xor(valores,bits,entradas)
 	when 4
 	when 5
 	end
-
 end
 
 def f_nor(montante,bits)
@@ -835,14 +845,13 @@ end
 def f_montante_sx(entradas)
 	if entradas.include? "S" and entradas.include? "E"
 		posição = entradas[entradas.size-1]
-		puts posição.to_i
 		return @Sx[posição.to_i-1]
 	else
 		if entradas.include? "F ="
-			resultante = @Sx.size-1
+			tamanho = @Sx.size-2
+			resultante = @Sx[tamanho]
 			return @Sx[resultante.to_i]
 		else
-			@XY = []
 			posição_y = entradas[entradas.size-1]
 			#puts entradas[entradas.size-1]
 			posição_x = entradas[entradas.size-3]
@@ -856,6 +865,14 @@ end
 
 #start program
 def f_main
+	@E1 = []
+	@E2 = []
+	@E3 = []
+	@E4 = []
+	@E5 = []
+	@Sx = []
+	@XY = []
+
 	text_content = f_read #text_content é um array(strs lines) com as entradas
 	portas = f_num_portas(text_content) #retornar o numero de portas
 	@bits = f_num_bits(text_content) #retorna bits do circuito

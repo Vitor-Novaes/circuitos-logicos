@@ -17,7 +17,6 @@ def f_read
 	end
 	puts "#{text}\n\n"
 	text
-
 end
 
 def f_print(text)
@@ -34,8 +33,14 @@ when '1'
 when '2'
 	saida = "E1 E2 F
 "
-else
+when '3'
 	saida = "E1 E2 E3 F
+"
+when '4'
+	saida = "E1 E2 E3 E4 F
+"
+else
+	saida = "E1 E2 E3 E4 E5 F
 "	
 end
 	
@@ -49,10 +54,6 @@ end
 
 
 #escreve a função booleana
-
-
-
-
 
 	File.write "out.txt",saida
 end
