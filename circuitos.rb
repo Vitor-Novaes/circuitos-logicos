@@ -924,7 +924,7 @@ def f_montante_sx(entradas)
 			tamanho = @Sx.size-1
 			return @Sx[tamanho]
 		else
-
+			
 			posição_y = entradas[entradas.size-1]
 			#puts entradas[entradas.size-1]
 			posição_x = entradas[entradas.size-3]
@@ -935,7 +935,6 @@ def f_montante_sx(entradas)
  		end
  	end
 end
-
 
 #start program
 def f_main
