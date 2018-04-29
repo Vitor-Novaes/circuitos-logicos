@@ -407,8 +407,19 @@ def f_and(valores,bits,entradas)
 		when "SS"
 			aux_x = []
 			aux_y = []
-			aux_x << @XY[0]
-			aux_y << @XY[1]
+			for x in 0..1
+				if x == 0 
+					@XY[x].each do |bit|
+						aux_x << bit
+					end
+				else
+					@XY[x].each do |bit|
+						aux_y << bit
+					end	
+				end
+			end
+			puts "#{aux_x}"
+
 			for c in 0..lines-1
 			   if aux_x[c] == "1" and aux_y[c] == "1" 
 			   		sd << "1"
@@ -477,8 +488,21 @@ def f_and(valores,bits,entradas)
 		else
 			aux_x = []
 			aux_y = []
-			aux_x << @XY[0]
-			aux_y << @XY[1]
+			for x in 0..1
+				if x == 0 
+					puts "entrei"
+					@XY[x].each do |bit|
+						aux_x << bit
+					end
+				else
+					@XY[x].each do |bit|
+						aux_y << bit
+					end	
+				end
+			end
+			puts "#{aux_x}"
+
+
 			for c in 0..lines-1
 			   if aux_x[c] == "1" and aux_y[c] == "1" 
 			   		sd << "1"
@@ -552,11 +576,23 @@ def f_or(valores,bits,entradas)
 			puts sd
 			return sd
 		when "SS"
-			
 			aux_x = []
 			aux_y = []
-			aux_x << @XY[0]
-			aux_y << @XY[1]
+			for x in 0..1
+				if x == 0 
+					puts "entrei"
+					@XY[x].each do |bit|
+						aux_x << bit
+					end
+				else
+					@XY[x].each do |bit|
+						aux_y << bit
+					end	
+				end
+			end
+			puts "#{aux_x}"
+
+
 			for c in 0..lines-1
 			   if aux_x[c] == "1" or aux_y[c] == "1" 
 			   		sd << "1"
@@ -625,8 +661,21 @@ def f_or(valores,bits,entradas)
 		else
 			aux_x = []
 			aux_y = []
-			aux_x << @XY[0]
-			aux_y << @XY[1]
+			for x in 0..1
+				if x == 0 
+					puts "entrei"
+					@XY[x].each do |bit|
+						aux_x << bit
+					end
+				else
+					@XY[x].each do |bit|
+						aux_y << bit
+					end	
+				end
+			end
+			puts "#{aux_x}"
+
+
 			for c in 0..lines-1
 			   if aux_x[c] == "1" or aux_y[c] == "1" 
 			   		sd << "1"
@@ -640,24 +689,6 @@ def f_or(valores,bits,entradas)
 	when 4
 	when 5
 	end
-end
-
-#OBS: ERRO
-def f_not(valores,bits,entradas)
-	sd = []
-
-	lines = 2**bits.to_i
-
-	
-	for c in 0..lines-1
-		if @E1[c] == "1"
-			sd << "0"
-		else
-			sd << "1"
-		end
-	end	
-	puts sd
-	sd
 end
 
 def f_xor(valores,bits,entradas)
@@ -691,9 +722,9 @@ def f_xor(valores,bits,entradas)
 		when "E1E2"
 			for c in 0..lines-1
 			   	if (@E1[c] == "1" and @E2[c] == "1") or (@E1[c] == "0" and @E2[c] == "0")
-		   			sd << "1"
-		  		else
 		   			sd << "0"
+		  		else
+		   			sd << "1"
 		   		end
 			end
 			puts sd
@@ -701,9 +732,9 @@ def f_xor(valores,bits,entradas)
 		when "E1Sx" 
 			for c in 0..lines-1
 			   	if (@E1[c] == "1" and sx[c] == "1") or (@E1[c] == "0" and sx[c] == "0")
-		   			sd << "1"
-		  		else
 		   			sd << "0"
+		  		else
+		   			sd << "1"
 		   		end
 			end
 			puts sd
@@ -711,9 +742,9 @@ def f_xor(valores,bits,entradas)
 		when "E2Sx"
 			for c in 0..lines-1
 			   	if (@E2[c] == "1" and sx[c] == "1") or (@E2[c] == "0" and sx[c] == "0")
-		   			sd << "1"
-		  		else
 		   			sd << "0"
+		  		else
+		   			sd << "1"
 		   		end
 			end
 			puts sd
@@ -721,8 +752,19 @@ def f_xor(valores,bits,entradas)
 		else
 			aux_x = []
 			aux_y = []
-			aux_x << @XY[0]
-			aux_y << @XY[1]
+			for x in 0..1
+				if x == 0 
+					puts "entrei"
+					@XY[x].each do |bit|
+						aux_x << bit
+					end
+				else
+					@XY[x].each do |bit|
+						aux_y << bit
+					end	
+				end
+			end
+			puts "#{aux_x}"
 			for c in 0..lines-1
 			   if (aux_x[c] == "1" and aux_y[c] == "1") or (aux_x[c] == "0" and aux_y[c] == "0") 
 			   		sd << "1"
@@ -738,9 +780,9 @@ def f_xor(valores,bits,entradas)
 		when "E1E2"
 			for c in 0..lines-1
 			   if (@E1[c] == "1" and @E2[c] == "1") or (@E2[c] == "0" and @E1[c] == "0")
-			   		sd << "1"
-			   else
 			   		sd << "0"
+			   else
+			   		sd << "1"
 			   end
 			end
 			puts sd
@@ -749,9 +791,9 @@ def f_xor(valores,bits,entradas)
 		when "E1E3"
 			for c in 0..lines-1
 			   if (@E1[c] == "1" and @E3[c] == "1") or (@E1[c] == "0" and @E3[c] == "0")
-			   		sd << "1"
-			   else
 			   		sd << "0"
+			   else
+			   		sd << "1"
 			   end
 			end
 			puts sd
@@ -760,9 +802,9 @@ def f_xor(valores,bits,entradas)
 		when "E2E3"
 			for c in 0..lines-1
 			   if (@E3[c] == "1" and @E2[c] == "1") or (@E2[c] == "0" and @E3[c] == "0")
-			   		sd << "1"
-			   else
 			   		sd << "0"
+			   else
+			   		sd << "1"
 			   end
 			end
 			puts sd
@@ -771,9 +813,9 @@ def f_xor(valores,bits,entradas)
 		when "E1Sx" 
 			for c in 0..lines-1
 			   if @E1[c] == "1" or sx[c] == "1" 
-			   		sd << "1"
-			   else
 			   		sd << "0"
+			   else
+			   		sd << "1"
 			   end
 			end
 			puts sd
@@ -781,9 +823,9 @@ def f_xor(valores,bits,entradas)
 		when "E2Sx"
 			for c in 0..lines-1
 			   if @E2[c] == "1" or sx[c] == "1" 
-			   		sd << "1"
-			   else
 			   		sd << "0"
+			   else
+			   		sd << "1"
 			   end
 			end
 			puts sd
@@ -791,13 +833,25 @@ def f_xor(valores,bits,entradas)
 		else
 			aux_x = []
 			aux_y = []
-			aux_x << @XY[0]
-			aux_y << @XY[1]
+			for x in 0..1
+				if x == 0 
+					puts "entrei"
+					@XY[x].each do |bit|
+						aux_x << bit
+					end
+				else
+					@XY[x].each do |bit|
+						aux_y << bit
+					end	
+				end
+			end
+			puts "#{aux_x}"
+
 			for c in 0..lines-1
 			   if aux_x[c] == "1" or aux_y[c] == "1" 
-			   		sd << "1"
-			   else
 			   		sd << "0"
+			   else
+			   		sd << "1"
 			   end
 			end
 			puts sd
@@ -806,6 +860,24 @@ def f_xor(valores,bits,entradas)
 	when 4
 	when 5
 	end
+end
+
+#OBS: ERRO
+def f_not(valores,bits,entradas)
+	sd = []
+
+	lines = 2**bits.to_i
+
+	
+	for c in 0..lines-1
+		if @E1[c] == "1"
+			sd << "0"
+		else
+			sd << "1"
+		end
+	end	
+	puts sd
+	sd
 end
 
 def f_nor(montante,bits)
@@ -839,6 +911,7 @@ end
 
 def f_montante_sx_armazena(montante)
 	@Sx << montante
+	puts "Armazena : #{@Sx}"
 end
 
 # função que analisa o Sx
@@ -848,16 +921,17 @@ def f_montante_sx(entradas)
 		return @Sx[posição.to_i-1]
 	else
 		if entradas.include? "F ="
-			tamanho = @Sx.size-2
-			resultante = @Sx[tamanho]
-			return @Sx[resultante.to_i]
+			tamanho = @Sx.size-1
+			return @Sx[tamanho]
 		else
+
 			posição_y = entradas[entradas.size-1]
 			#puts entradas[entradas.size-1]
 			posição_x = entradas[entradas.size-3]
 			#puts entradas[entradas.size-3]
 			@XY[0] = @Sx[posição_x.to_i-1]
 			@XY[1] = @Sx[posição_y.to_i-1]
+			return @XY
  		end
  	end
 end

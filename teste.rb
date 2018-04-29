@@ -1,3 +1,16 @@
+dados = [["CELULA", "LENNA", "JUL 01", "2015 12:00:00 AM", "N"], ["CELULA", "ARI", "JUL 01", "2015 12:00:00 AM", "P"]]
+novo_array = []
+
+dados.each do |x|
+  array_filho = []
+  
+  array_filho.push(x[1])
+
+  novo_array.push(array_filho)
+end
+
+p novo_array
+
 =begin
 def f_read
 	file = File.read("cld_01_e_falha.txt")
@@ -124,8 +137,9 @@ operações_lógicas = []
      "1", "1", "1", "0", "1", 
      "1", "1", "1", "1", "0", 
      "1", "1", "1", "1", "1"]
-=end
+
 bits = 3
 
 lines = 2**bits
 puts "#{lines}"
+=end
