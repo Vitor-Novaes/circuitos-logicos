@@ -1,3 +1,34 @@
+		aux2 = 1
+		aux3 = 2
+		aux4 = 3
+		aux5 = 4
+		teste = "."
+		for c in 0..160
+			if c%5 == 0
+				teste << "E1"
+			elsif c == 1 or c == aux2
+				aux2 += 5
+				teste << "E2"
+			elsif c == 2 or c == aux3
+				aux3 += 5
+				teste << "E3"
+			elsif c == 3 or c == aux4
+				aux4 += 5
+				teste << "E4"
+			elsif c == 4 or c == aux5
+				aux5 += 5
+				teste << "E5"
+			end
+			puts "#{teste}"
+			puts "\n"
+		end
+		aux2 = 0
+		aux3 = 0
+		aux4 = 0
+		aux5 = 0
+
+
+=begin
 dados = [["CELULA", "LENNA", "JUL 01", "2015 12:00:00 AM", "N"], ["CELULA", "ARI", "JUL 01", "2015 12:00:00 AM", "P"]]
 novo_array = []
 
@@ -11,7 +42,6 @@ end
 
 p novo_array
 
-=begin
 def f_read
 	file = File.read("cld_01_e_falha.txt")
 	text_content = file.split "\n"

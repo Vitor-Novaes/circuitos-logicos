@@ -1,6 +1,6 @@
 #require_relative 'Class_strings'
 require_relative 'manipulacao_txt'
-
+aux
 
 # retornar número de portas (string)
 def f_num_portas(text_content)
@@ -119,6 +119,55 @@ def f_verifica_entradas(text_line,valores)
 
 	#caso tenha Porta NOT
 	if text_line.include? "NOT"
+		if valores.size == 64
+			aux2 = 1
+			aux3 = 2
+			aux4 = 3
+			for c in 0..valores.size-1
+			if c%4 == 0
+				@E1 << valores[c]
+			elsif c == 1 or c == aux2
+				aux2 += 4
+				@E2 << valores[c]
+			elsif c == 2 or c == aux3
+				aux3 += 4
+				@E3 << valores[c]
+			elsif c == 3 or c == aux4
+				aux4 += 4
+				@E4 << valores[c]
+			end
+			end
+			aux4 = 0
+			aux3 = 0
+			aux2 = 0
+		elsif valores.size == 160
+			aux2 = 1
+			aux3 = 2
+			aux4 = 3
+			aux5 = 4
+			for c in 0..valores.size-1
+				if c%5 == 0
+					@E1 << valores[c]
+				elsif c == 1 or c == aux2
+					aux2 += 5
+					@E2 << valores[c]
+				elsif c == 2 or c == aux3
+					aux3 += 5
+					@E3 << valores[c]
+				elsif c == 3 or c == aux4
+					aux4 += 5
+					@E4 << valores[c]
+				elsif c == 4 or c == aux5
+					aux5 += 5
+					@E5 << valores[c]
+				end
+			end
+			aux2 = 0
+			aux3 = 0
+			aux4 = 0
+			aux5 = 0
+		end
+
 		if valores.size == 2 and text_line.include? "E1"
 			@E1 = valores
 			puts "nE1"
@@ -178,19 +227,28 @@ def f_verifica_entradas(text_line,valores)
 			puts entradas
 			return entradas
 		elsif valores.size == 64 and text_line.include? "E1"
-		elsif valores.size == 64 and text_line.include? "E2"			
+			return "nE1"
+		elsif valores.size == 64 and text_line.include? "E2"
+			return "nE2"
 		elsif valores.size == 64 and text_line.include? "E3"
+			return "nE3"
 		elsif valores.size == 64 and text_line.include? "E4"
+			return "nE4"
 		elsif valores.size == 64 and text_line.include? "S"
 			entradas = "nS"
 			entradas << text_line[entrada_buf-1]
 			puts entradas
 			return entradas
 		elsif valores.size == 160 and text_line.include? "E1"
+			return "nE1"
 		elsif valores.size == 160 and text_line.include? "E2"
+			return "nE2"
 		elsif valores.size == 160 and text_line.include? "E3"
+			return "nE3"
 		elsif valores.size == 160 and text_line.include? "E4"
+			return "nE4"
 		elsif valores.size == 160 and text_line.include? "E5"
+			return "nE5"
 		elsif valores.size == 160 and text_line.include? "S"
 			entradas = "nS"
 			entradas << text_line[entrada_buf-1]
@@ -330,12 +388,88 @@ def f_verifica_entradas(text_line,valores)
 			return entradas
 		end
 	when 64
-		@E1 = []
-		@E2 = []
-		@E3 = []
-		@E4 = []
-	when 160
+		aux2 = 1
+		aux3 = 2
+		aux4 = 3
+		for c in 0..valores.size-1
+			if c%4 == 0
+				@E1 << valores[c]
+			elsif c == 1 or c == aux2
+				aux2 += 4
+				@E2 << valores[c]
+			elsif c == 2 or c == aux3
+				aux3 += 4
+				@E3 << valores[c]
+			elsif c == 3 or c == aux4
+				aux4 += 4
+				@E4 << valores[c]
+			end
+		end
+		aux4 = 0
+		aux3 = 0
+		aux2 = 0
 
+		if text_line.include? "E1" and text_line.include? "E2" #(E1,E2)
+			return "E1E2"
+		elsif text_line.include? "E1" and text_line.include? "E3" #(E1,E3)
+			return "E1E3"
+		elsif text_line.include? "E1" and text_line.include? "E4" #(E1,E4)
+			return "E1E4"
+		elsif text_line.include? "E2" and text_line.include? "E3" #(E2,E3)
+			return "E2E3"
+		elsif text_line.include? "E2" and text_line.include? "E4" #(E2,E4)
+			return "E2E4"
+		elsif text_line.include? "E3" and text_line.include? "E4" #(E3,E4)
+			return "E3E4"
+		elsif text_line.include? "E1" and text_line.include? ",S" #(E1,Sx)
+			entradas = "E1S"
+			entradas << text_line[entrada_buf-1]
+			return entradas
+		elsif text_line.include? "E2" and text_line.include? ",S" #(E2,Sx)
+			entradas = "E2S"
+			entradas << text_line[entrada_buf-1]
+			return entradas
+		elsif text_line.include? "E3" and text_line.include? ",S" #(E3,Sx)
+			entradas = "E3S"
+			entradas << text_line[entrada_buf-1]
+			return entradas
+		elsif text_line.include? "E4" and text_line.include? ",S" #(E4,Sx)
+			entradas = "E4S"
+			entradas << text_line[entrada_buf-1]
+			return entradas
+		elsif text_line.include? "E1" and text_line.include? ",S" #(Sx,Sy)
+			entradas = "S"
+			entradas << text_line[entrada_buf-4]
+			entradas = "S"
+			entradas << text_line[entrada_buf-1]
+			return entradas
+		end
+	when 160
+		aux2 = 1
+		aux3 = 2
+		aux4 = 3
+		aux5 = 4
+		for c in 0..valores.size-1
+			if c%5 == 0
+				@E1 << valores[c]
+			elsif c == 1 or c == aux2
+				aux2 += 5
+				@E2 << valores[c]
+			elsif c == 2 or c == aux3
+				aux3 += 5
+				@E3 << valores[c]
+			elsif c == 3 or c == aux4
+				aux4 += 5
+				@E4 << valores[c]
+			elsif c == 4 or c == aux5
+				aux5 += 5
+				@E5 << valores[c]
+			end
+		end
+		aux2 = 0
+		aux3 = 0
+		aux4 = 0
+		aux5 = 0
 	end
 end
 
@@ -615,7 +749,96 @@ def f_and(valores,bits,entradas)
 			return sd
 		end
 	when 4
-
+		case params
+		when "E1E2"
+			for c in 0..lines-1
+			   if @E1[c] == "1" and @E2[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1E3"
+			for c in 0..lines-1
+			   if @E1[c] == "1" and @E3[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1E4"
+			
+		when "E2E3"
+			for c in 0..lines-1
+			   if @E2[c] == "1" and @E3[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2E4"
+		when "E3E4"
+		when "E1Sx"
+			for c in 0..lines-1
+			   if @E1[c] == "1" and sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2Sx"
+			for c in 0..lines-1
+			   if @E2[c] == "1" and sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E3Sx"
+			for c in 0..lines-1
+			   if @E3[c] == "1" and sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E4Sx"
+		when "SS"
+			aux_x = []
+			aux_y = []
+			for x in 0..1
+				if x == 0 
+					@XY[x].each do |bit|
+						aux_x << bit
+					end
+				else
+					@XY[x].each do |bit|
+						aux_y << bit
+					end	
+				end
+			end
+			for c in 0..lines-1
+			   if aux_x[c] == "1" and aux_y[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		end
 	when 5
 	end		
 end
