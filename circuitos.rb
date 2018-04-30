@@ -112,15 +112,103 @@ end
 #verifica entradas e retorna um array somente da entrada dos params e uma string com os params >> f_operações...
 def f_verifica_entradas(text_line,valores)
 	entradas = ""
+	aux2 = 1 # AUX para E2
+	aux3 = 2 # AUX para E3
 	entrada_buf = text_line.size-3 # pegar o elemento de Sx
 	puts text_line
+
+	#caso tenha Portas NOT
+	if text_line.include? "NOT"
+		if valores.size == 2 and text_line.include? "E1"
+			@E1 = valores
+			puts "nE1"
+			return "nE1"
+		elsif valores.size == 2 and text_line.include? "S"
+			entradas = "nS"
+			entradas << text_line[entrada_buf-1]
+			puts entradas
+			return entradas
+		elsif valores.size == 8 and text_line.include? "E1"
+			for c in 0..valores.size-1
+				if c%2 == 0
+					@E1 << valores[c]
+				end
+			end
+			return "nE1"
+		elsif valores.size == 8 and text_line.include? "E2"
+			for c in 0..valores.size-1
+				if c%2 != 0
+					@E2 << valores[c]
+				end
+			end
+			return "nE2"
+		elsif valores.size == 8 and text_line.include? "S"
+			entradas = "nS"
+			entradas << text_line[entrada_buf-1]
+			puts entradas
+			return entradas
+		elsif valores.size == 24 and text_line.include? "E1"
+			for c in 0..valores.size-1
+				if c%3 == 0
+					@E1 << valores[c]
+				end
+			end
+			return "nE1"
+		elsif valores.size == 24 and text_line.include? "E2"
+			for c in 0..valores.size-1
+				if c%3 == 0
+					next
+				elsif c == 1 or c == aux
+					aux2 += 3
+					@E2 << valores[c]
+				end
+			end
+			aux2 = 0
+			return "nE2"
+		elsif valores.size == 24 and text_line.include? "E3"
+			for c in 0..valores.size-1
+				if c%3 == 0
+					next
+				elsif c == 2 or c == aux
+					aux3 += 3
+					@E3 << valores[c]
+				end
+			end
+			aux3 = 0
+			return "nE3"
+		elsif valores.size == 24 and text_line.include? "S"
+			entradas = "nS"
+			entradas << text_line[entrada_buf-1]
+			puts entradas
+			return entradas
+		elsif valores.size == 64 and text_line.include? "E1"
+		elsif valores.size == 64 and text_line.include? "E2"			
+		elsif valores.size == 64 and text_line.include? "E3"
+		elsif valores.size == 64 and text_line.include? "E4"
+		elsif valores.size == 64 and text_line.include? "S"
+			entradas = "nS"
+			entradas << text_line[entrada_buf-1]
+			puts entradas
+			return entradas
+		elsif valores.size == 160 and text_line.include? "E1"
+		elsif valores.size == 160 and text_line.include? "E2"
+		elsif valores.size == 160 and text_line.include? "E3"
+		elsif valores.size == 160 and text_line.include? "E4"
+		elsif valores.size == 160 and text_line.include? "E5"
+		elsif valores.size == 160 and text_line.include? "S"
+			entradas = "nS"
+			entradas << text_line[entrada_buf-1]
+			puts entradas
+			return entradas
+		end	
+	end
+
 	
 	case valores.size
 	#1 bit
 	when 2
 		if text_line.include? "E1" 
 			@E1 = valores
-			#resultante = f_not(@e1)
 			return entradas << "E1"
 		else
 			if text_line.include? "(S"
@@ -141,37 +229,31 @@ def f_verifica_entradas(text_line,valores)
 				end
 			end
 			return entradas << "E1E2"
-		else
-			if text_line.include? "E1" and text_line.include? ",S" #(E1,Sx)
-				for c in 0..valores.size-1
-					if c%2 == 0
-						@E1 << valores[c]
-					end
-				end
-				entradas << "E1S"
-				entradas << text_line[entrada_buf-1]
-				return f_verifica_entradas
-			else
-				if text_line.include? "E2" and text_line.include? ",S" #(E2,Sx)
-					for c in 0..valores.size-1
-						if c%2 != 0
-							@E2 << valores[c]
-						end
-					end
-					entradas << "E2S"
-					entradas << text_line[entrada_buf-1]
-					return entradas
-				else
-					if text_line.include? ",S" and text_line.include? "(S" #(Sx,Sy)
-						entradas << "S"
-						entradas << text_line[entrada_buf-4]
-						entradas << "S"
-						entradas << text_line[entrada_buf-1]
-						puts entradas
-						return entradas
-					end
+		elsif text_line.include? "E1" and text_line.include? ",S" #(E1,Sx)
+			for c in 0..valores.size-1
+				if c%2 == 0
+					@E1 << valores[c]
 				end
 			end
+			entradas << "E1S"
+			entradas << text_line[entrada_buf-1]
+			return f_verifica_entradas
+		elsif text_line.include? "E2" and text_line.include? ",S" #(E2,Sx)
+			for c in 0..valores.size-1
+				if c%2 != 0
+					@E2 << valores[c]
+				end
+			end
+			entradas << "E2S"
+			entradas << text_line[entrada_buf-1]
+			return entradas
+		elsif text_line.include? ",S" and text_line.include? "(S" #(Sx,Sy)
+			entradas << "S"
+			entradas << text_line[entrada_buf-4]
+			entradas << "S"
+			entradas << text_line[entrada_buf-1]
+			puts entradas
+			return entradas
 		end
 	#3 bits obs : SxSy nn implementado
 	when 24
@@ -287,6 +369,10 @@ def f_operações_lógicas(tverdade,text_content,valores,bits)
 						else
 							if text_content[c].include? " NOT" #OKAY
 								text_line = text_content[c] 
+								# entradas = f_verifica_entradas(text_line,valores)
+								# montante = f_not(valores,@bits,entradas)
+								# f_montante_sx_armazena(montante)
+								# text_line = text_content[c]
 								entradas = f_verifica_entradas(text_line,valores)
 								montante = f_not(valores,@bits,entradas)
 								f_montante_sx_armazena(montante)
@@ -692,7 +778,6 @@ def f_or(valores,bits,entradas)
 end
 
 def f_xor(valores,bits,entradas)
-	sd = []
 	aux = 0
 	#case bits
 	sd = [] # array de saida
@@ -862,22 +947,79 @@ def f_xor(valores,bits,entradas)
 	end
 end
 
-#OBS: ERRO
+#OBS: somente pra 1 BIT
 def f_not(valores,bits,entradas)
-	sd = []
+	#case bits
+	sd = [] # array de saida
+	sx = [] # array no caso de montantes Sx
+	params = entradas
+
+	if params.include? "S"
+	    sx = f_montante_sx(params)
+		puts "#{params}"
+	end
 
 	lines = 2**bits.to_i
-
-	
-	for c in 0..lines-1
-		if @E1[c] == "1"
-			sd << "0"
-		else
-			sd << "1"
+	case bits.to_i
+	when 1
+		if params == "nE1" 
+			for c in 0..lines-1
+				if @E1[c] == "1"
+					sd << "0"
+				else
+					sd << "1"
+				end
+			end	
+		elsif params.include? "nS"
+			for c in 0..lines-1
+				if sx[c] == "1"
+					sd << "0"
+				else
+					sd << "1"
+				end
+			end	
 		end
-	end	
-	puts sd
-	sd
+		puts sd
+		return sd
+	when 2
+		if params == "nE1" 
+			for c in 0..lines-1
+				if @E1[c] == "1"
+					sd << "0"
+				else
+					sd << "1"
+				end
+			end
+			puts sd
+			return sd
+		elsif params == "nE2" 
+			for c in 0..lines-1
+				if @E2[c] == "1"
+					sd << "0"
+				else
+					sd << "1"
+				end
+			end	
+			puts sd
+			return sd
+		elsif params.include? "nS" 
+			for c in 0..lines-1
+				if sx[c] == "1"
+					sd << "0"
+				else
+					sd << "1"
+				end
+			end	
+			puts sd
+			return sd
+		end
+	when 3
+		
+	when 4
+
+	else
+
+	end
 end
 
 def f_nor(montante,bits)
@@ -919,21 +1061,24 @@ def f_montante_sx(entradas)
 	if entradas.include? "S" and entradas.include? "E"
 		posição = entradas[entradas.size-1]
 		return @Sx[posição.to_i-1]
-	else
-		if entradas.include? "F ="
-			tamanho = @Sx.size-1
-			return @Sx[tamanho]
-		else
-			
-			posição_y = entradas[entradas.size-1]
-			#puts entradas[entradas.size-1]
-			posição_x = entradas[entradas.size-3]
-			#puts entradas[entradas.size-3]
-			@XY[0] = @Sx[posição_x.to_i-1]
-			@XY[1] = @Sx[posição_y.to_i-1]
-			return @XY
- 		end
- 	end
+	
+	elsif entradas.include? "nS" 
+		posição = entradas[entradas.size-1]
+		return @Sx[posição.to_i-1]
+
+	elsif entradas.include? "F ="
+		tamanho = @Sx.size-1
+		return @Sx[tamanho]
+	
+	elsif
+	 	posição_y = entradas[entradas.size-1]
+		#puts entradas[entradas.size-1]
+		posição_x = entradas[entradas.size-3]
+		#puts entradas[entradas.size-3]
+		@XY[0] = @Sx[posição_x.to_i-1]
+		@XY[1] = @Sx[posição_y.to_i-1]
+		return @XY
+	end
 end
 
 #start program
@@ -960,7 +1105,4 @@ def f_main
 
 	valores = f_valores_verdade(tverdade,@bits) #valores.class: string(array)
 	f_operações_lógicas(tverdade,text_content,valores,@bits)#decide qual função lógica chamar
-
-
-
 end
