@@ -117,7 +117,7 @@ def f_verifica_entradas(text_line,valores)
 	entrada_buf = text_line.size-3 # pegar o elemento de Sx
 	puts text_line
 
-	#caso tenha Portas NOT
+	#caso tenha Porta NOT
 	if text_line.include? "NOT"
 		if valores.size == 2 and text_line.include? "E1"
 			@E1 = valores
@@ -156,9 +156,7 @@ def f_verifica_entradas(text_line,valores)
 			return "nE1"
 		elsif valores.size == 24 and text_line.include? "E2"
 			for c in 0..valores.size-1
-				if c%3 == 0
-					next
-				elsif c == 1 or c == aux
+				if c == 1 or c == aux
 					aux2 += 3
 					@E2 << valores[c]
 				end
@@ -167,9 +165,7 @@ def f_verifica_entradas(text_line,valores)
 			return "nE2"
 		elsif valores.size == 24 and text_line.include? "E3"
 			for c in 0..valores.size-1
-				if c%3 == 0
-					next
-				elsif c == 2 or c == aux
+				if c == 2 or c == aux
 					aux3 += 3
 					@E3 << valores[c]
 				end
@@ -268,6 +264,7 @@ def f_verifica_entradas(text_line,valores)
 					@E2 << valores[c]
 				end
 			end
+			aux2 = 0
 			return entradas << "E1E2"
 		elsif text_line.include? "E1" and text_line.include? "E3" #(E1,E3)
 			for c in 0..valores.size-1
@@ -278,6 +275,7 @@ def f_verifica_entradas(text_line,valores)
 					@E3 << valores[c]
 				end
 			end
+			aux3 = 0
 			return entradas << "E1E3"
 		elsif text_line.include? "E2" and text_line.include? "E3" #(E2,E3)
 			for c in 0..valores.size-1
@@ -289,22 +287,37 @@ def f_verifica_entradas(text_line,valores)
 					@E3 << valores[c]
 				end
 			end
+			aux2 = 0
+			aux3 = 0
 			return entradas << "E2E3"
 		elsif text_line.include? "E1" and text_line.include? ",S" #(E1,Sx)
 			for c in 0..valores.size-1
-				if c%2 == 0
+				if c%3 == 0
 					@E1 << valores[c]
 				end
 			end
 			entradas << "E1S"
 			entradas << text_line[entrada_buf-1]
-			return f_verifica_entradas
+			return entradas
 		elsif text_line.include? "E2" and text_line.include? ",S" #(E2,Sx)
 			for c in 0..valores.size-1
-				if c%2 != 0
+				if c == 1 or c == aux
+					aux2 += 3
 					@E2 << valores[c]
 				end
 			end
+			aux2 = 0
+			entradas << "E2S"
+			entradas << text_line[entrada_buf-1]
+			return entradas
+		elsif text_line.include? "E3" and text_line.include? ",S" #(E3,Sx)
+			for c in 0..valores.size-1
+				if c == 2 or c == aux
+					aux3 += 3
+					@E3 << valores[c]
+				end
+			end
+			aux3 = 0
 			entradas << "E2S"
 			entradas << text_line[entrada_buf-1]
 			return entradas
@@ -456,8 +469,6 @@ def f_and(valores,bits,entradas)
 	lines = 2**bits.to_i # quantidade de repetições
 
 	case(bits.to_i)
-	when 1
-
 	when 2
 		case params
 		when "E1E2"
@@ -504,8 +515,6 @@ def f_and(valores,bits,entradas)
 					end	
 				end
 			end
-			puts "#{aux_x}"
-
 			for c in 0..lines-1
 			   if aux_x[c] == "1" and aux_y[c] == "1" 
 			   		sd << "1"
@@ -571,12 +580,21 @@ def f_and(valores,bits,entradas)
 			end
 			puts sd
 			return sd
-		else
+		when "E3Sx"
+			for c in 0..lines-1
+			   if @E3[c] == "1" and sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "SS"	
 			aux_x = []
 			aux_y = []
 			for x in 0..1
 				if x == 0 
-					puts "entrei"
 					@XY[x].each do |bit|
 						aux_x << bit
 					end
@@ -586,9 +604,6 @@ def f_and(valores,bits,entradas)
 					end	
 				end
 			end
-			puts "#{aux_x}"
-
-
 			for c in 0..lines-1
 			   if aux_x[c] == "1" and aux_y[c] == "1" 
 			   		sd << "1"
@@ -676,8 +691,6 @@ def f_or(valores,bits,entradas)
 					end	
 				end
 			end
-			puts "#{aux_x}"
-
 
 			for c in 0..lines-1
 			   if aux_x[c] == "1" or aux_y[c] == "1" 
@@ -737,6 +750,16 @@ def f_or(valores,bits,entradas)
 		when "E2Sx"
 			for c in 0..lines-1
 			   if @E2[c] == "1" or sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E3Sx"
+			for c in 0..lines-1
+			   if @E3[c] == "1" or sx[c] == "1" 
 			   		sd << "1"
 			   else
 			   		sd << "0"
@@ -849,7 +872,6 @@ def f_xor(valores,bits,entradas)
 					end	
 				end
 			end
-			puts "#{aux_x}"
 			for c in 0..lines-1
 			   if (aux_x[c] == "1" and aux_y[c] == "1") or (aux_x[c] == "0" and aux_y[c] == "0") 
 			   		sd << "1"
@@ -897,7 +919,7 @@ def f_xor(valores,bits,entradas)
 
 		when "E1Sx" 
 			for c in 0..lines-1
-			   if @E1[c] == "1" or sx[c] == "1" 
+			   if (@E1[c] == "1" and sx[c] == "1") or (@E1[c] == "0" and sx[c] == "0")
 			   		sd << "0"
 			   else
 			   		sd << "1"
@@ -907,7 +929,17 @@ def f_xor(valores,bits,entradas)
 			return sd
 		when "E2Sx"
 			for c in 0..lines-1
-			   if @E2[c] == "1" or sx[c] == "1" 
+			   if (@E2[c] == "1" and sx[c] == "1") or (@E2[c] == "0" and sx[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E3Sx"
+			for c in 0..lines-1
+			   if (@E3[c] == "1" and sx[c] == "1") or (@E3[c] == "0" and sx[c] == "0")
 			   		sd << "0"
 			   else
 			   		sd << "1"
@@ -930,10 +962,9 @@ def f_xor(valores,bits,entradas)
 					end	
 				end
 			end
-			puts "#{aux_x}"
 
 			for c in 0..lines-1
-			   if aux_x[c] == "1" or aux_y[c] == "1" 
+			   if (aux_x[c] == "1" and aux_y[c] == "1") or (aux_x[c] == "0" and aux_y[c] == "0")
 			   		sd << "0"
 			   else
 			   		sd << "1"
@@ -1014,7 +1045,7 @@ def f_not(valores,bits,entradas)
 			return sd
 		end
 	when 3
-		
+
 	when 4
 
 	else
@@ -1034,6 +1065,8 @@ def f_nor(montante,bits)
 			sd << "1"
 		end
 	end
+	puts "Negado :"
+	puts sd
 	sd
 end
 
@@ -1048,6 +1081,8 @@ def f_nand(montante,bits)
 			sd << "1"
 		end
 	end
+	puts "Negado :"
+	puts sd
 	sd
 end
 
@@ -1070,7 +1105,8 @@ def f_montante_sx(entradas)
 		tamanho = @Sx.size-1
 		return @Sx[tamanho]
 	
-	elsif
+	else
+		puts "entrei"
 	 	posição_y = entradas[entradas.size-1]
 		#puts entradas[entradas.size-1]
 		posição_x = entradas[entradas.size-3]
