@@ -2,7 +2,7 @@
 %Linhas iniciando com % são linhas de comentários. 
 %A primeira linha não comentário contém o número de entradas externas e o número de portas lógicas do circuito.
 %
-2, 5
+5, 5
 %
 %Em seguida vem a lista de portas com suas conexões. S1 é a saida da porta k, Ej é a entrada externa j.
 %A saída do circuito é sempre indicada pela letra F.
@@ -10,8 +10,8 @@
 %Atenção Obrigatório : Espaço depois do igual, o Ej da entrada, 
 %
 S1 = AND(E1,E2);
-S2 = XOR(E2,S1);
-S3 = AND(S1,S2);
+S2 = XOR(E3,E4);
+S3 = AND(E5,S1);
 S4 = NAND(S2,S3);
 S5 = NOT(S4);
 F = S5;

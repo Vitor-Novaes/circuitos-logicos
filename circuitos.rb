@@ -1,6 +1,5 @@
 #require_relative 'Class_strings'
 require_relative 'manipulacao_txt'
-aux
 
 # retornar número de portas (string)
 def f_num_portas(text_content)
@@ -119,7 +118,8 @@ def f_verifica_entradas(text_line,valores)
 
 	#caso tenha Porta NOT
 	if text_line.include? "NOT"
-		if valores.size == 64
+		unless text_line.include? "S"
+			if valores.size == 64
 			aux2 = 1
 			aux3 = 2
 			aux4 = 3
@@ -140,7 +140,7 @@ def f_verifica_entradas(text_line,valores)
 			aux4 = 0
 			aux3 = 0
 			aux2 = 0
-		elsif valores.size == 160
+			elsif valores.size == 160
 			aux2 = 1
 			aux3 = 2
 			aux4 = 3
@@ -166,6 +166,7 @@ def f_verifica_entradas(text_line,valores)
 			aux3 = 0
 			aux4 = 0
 			aux5 = 0
+			end
 		end
 
 		if valores.size == 2 and text_line.include? "E1"
@@ -205,7 +206,7 @@ def f_verifica_entradas(text_line,valores)
 			return "nE1"
 		elsif valores.size == 24 and text_line.include? "E2"
 			for c in 0..valores.size-1
-				if c == 1 or c == aux
+				if c == 1 or c == aux2
 					aux2 += 3
 					@E2 << valores[c]
 				end
@@ -214,7 +215,7 @@ def f_verifica_entradas(text_line,valores)
 			return "nE2"
 		elsif valores.size == 24 and text_line.include? "E3"
 			for c in 0..valores.size-1
-				if c == 2 or c == aux
+				if c == 2 or c == aux3
 					aux3 += 3
 					@E3 << valores[c]
 				end
@@ -237,7 +238,6 @@ def f_verifica_entradas(text_line,valores)
 		elsif valores.size == 64 and text_line.include? "S"
 			entradas = "nS"
 			entradas << text_line[entrada_buf-1]
-			puts entradas
 			return entradas
 		elsif valores.size == 160 and text_line.include? "E1"
 			return "nE1"
@@ -252,12 +252,10 @@ def f_verifica_entradas(text_line,valores)
 		elsif valores.size == 160 and text_line.include? "S"
 			entradas = "nS"
 			entradas << text_line[entrada_buf-1]
-			puts entradas
 			return entradas
 		end	
 	end
 
-	
 	case valores.size
 	#1 bit
 	when 2
@@ -317,7 +315,7 @@ def f_verifica_entradas(text_line,valores)
 			for c in 0..valores.size-1
 				if c%3 == 0
 					@E1 << valores[c]
-				elsif c == 1 or c == aux
+				elsif c == 1 or c == aux2
 					aux2 += 3
 					@E2 << valores[c]
 				end
@@ -328,7 +326,7 @@ def f_verifica_entradas(text_line,valores)
 			for c in 0..valores.size-1
 				if c%3 == 0
 					@E1 << valores[c]
-				elsif c == 2 or c == aux
+				elsif c == 2 or c == aux3
 					aux3 += 3
 					@E3 << valores[c]
 				end
@@ -337,10 +335,10 @@ def f_verifica_entradas(text_line,valores)
 			return entradas << "E1E3"
 		elsif text_line.include? "E2" and text_line.include? "E3" #(E2,E3)
 			for c in 0..valores.size-1
-				if c == 1 or c == aux
+				if c == 1 or c == aux2
 					aux2 += 3
 					@E2 << valores[c]
-				elsif c == 2 or c == aux
+				elsif c == 2 or c == aux3
 					aux3 += 3
 					@E3 << valores[c]
 				end
@@ -359,7 +357,7 @@ def f_verifica_entradas(text_line,valores)
 			return entradas
 		elsif text_line.include? "E2" and text_line.include? ",S" #(E2,Sx)
 			for c in 0..valores.size-1
-				if c == 1 or c == aux
+				if c == 1 or c == aux2
 					aux2 += 3
 					@E2 << valores[c]
 				end
@@ -370,7 +368,7 @@ def f_verifica_entradas(text_line,valores)
 			return entradas
 		elsif text_line.include? "E3" and text_line.include? ",S" #(E3,Sx)
 			for c in 0..valores.size-1
-				if c == 2 or c == aux
+				if c == 2 or c == aux3
 					aux3 += 3
 					@E3 << valores[c]
 				end
@@ -437,10 +435,10 @@ def f_verifica_entradas(text_line,valores)
 			entradas = "E4S"
 			entradas << text_line[entrada_buf-1]
 			return entradas
-		elsif text_line.include? "E1" and text_line.include? ",S" #(Sx,Sy)
+		elsif text_line.include? "(S" and text_line.include? ",S" #(Sx,Sy)
 			entradas = "S"
 			entradas << text_line[entrada_buf-4]
-			entradas = "S"
+			entradas << "S"
 			entradas << text_line[entrada_buf-1]
 			return entradas
 		end
@@ -470,6 +468,55 @@ def f_verifica_entradas(text_line,valores)
 		aux3 = 0
 		aux4 = 0
 		aux5 = 0
+
+		if text_line.include? "E1" and text_line.include? "E2" #(E1,E2)
+			return "E1E2"
+		elsif text_line.include? "E1" and text_line.include? "E3" #(E1,E3)
+			return "E1E3"
+		elsif text_line.include? "E1" and text_line.include? "E4" #(E1,E4)
+			return "E1E4"
+		elsif text_line.include? "E1" and text_line.include? "E5" #(E1,E5)
+			return "E1E5"
+		elsif text_line.include? "E2" and text_line.include? "E3" #(E2,E3)
+			return "E2E3"
+		elsif text_line.include? "E2" and text_line.include? "E4" #(E2,E4)
+			return "E2E4"
+		elsif text_line.include? "E2" and text_line.include? "E5" #(E2,E5)
+			return "E2E5"
+		elsif text_line.include? "E3" and text_line.include? "E4" #(E3,E4)
+			return "E3E4"
+		elsif text_line.include? "E3" and text_line.include? "E5" #(E3,E5)
+			return "E3E5"
+		elsif text_line.include? "E4" and text_line.include? "E5" #(E4,E5)
+			return "E4E5"
+		elsif text_line.include? "E1" and text_line.include? ",S" #(E1,Sx)
+			entradas = "E1S"
+			entradas << text_line[entrada_buf-1]
+			return entradas
+		elsif text_line.include? "E2" and text_line.include? ",S" #(E2,Sx)
+			entradas = "E2S"
+			entradas << text_line[entrada_buf-1]
+			return entradas
+		elsif text_line.include? "E3" and text_line.include? ",S" #(E3,Sx)
+			entradas = "E3S"
+			entradas << text_line[entrada_buf-1]
+			return entradas
+		elsif text_line.include? "E4" and text_line.include? ",S" #(E4,Sx)
+			entradas = "E4S"
+			entradas << text_line[entrada_buf-1]
+			return entradas
+		elsif text_line.include? "E5" and text_line.include? ",S" #(E5,Sx)
+			entradas = "E5S"
+			entradas << text_line[entrada_buf-1]
+			return entradas
+		elsif text_line.include? "(S" and text_line.include? ",S" #(Sx,Sy)
+			entradas = "S"
+			entradas << text_line[entrada_buf-4]
+			entradas << "S"
+			entradas << text_line[entrada_buf-1]
+			puts "#{entradas}"
+			return entradas
+		end
 	end
 end
 
@@ -615,7 +662,7 @@ def f_and(valores,bits,entradas)
 			end
 			puts sd
 			return sd
-		when "E1Sx" 
+		when "E1Sx"
 			for c in 0..lines-1
 			   if @E1[c] == "1" and sx[c] == "1" 
 			   		sd << "1"
@@ -671,7 +718,6 @@ def f_and(valores,bits,entradas)
 			end
 			puts sd
 			return sd
-
 		when "E1E3"
 			for c in 0..lines-1
 			   if @E1[c] == "1" and @E3[c] == "1" 
@@ -682,7 +728,6 @@ def f_and(valores,bits,entradas)
 			end
 			puts sd
 			return sd
-
 		when "E2E3"
 			for c in 0..lines-1
 			   if @E2[c] == "1" and @E3[c] == "1" 
@@ -693,8 +738,7 @@ def f_and(valores,bits,entradas)
 			end
 			puts sd
 			return sd
-
-		when "E1Sx" 
+		when "E1Sx"
 			for c in 0..lines-1
 			   if @E1[c] == "1" and sx[c] == "1" 
 			   		sd << "1"
@@ -724,7 +768,7 @@ def f_and(valores,bits,entradas)
 			end
 			puts sd
 			return sd
-		when "SS"	
+		when "SS"
 			aux_x = []
 			aux_y = []
 			for x in 0..1
@@ -771,7 +815,15 @@ def f_and(valores,bits,entradas)
 			puts sd
 			return sd
 		when "E1E4"
-			
+			for c in 0..lines-1
+			   if @E1[c] == "1" and @E4[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
 		when "E2E3"
 			for c in 0..lines-1
 			   if @E2[c] == "1" and @E3[c] == "1" 
@@ -783,7 +835,25 @@ def f_and(valores,bits,entradas)
 			puts sd
 			return sd
 		when "E2E4"
+			for c in 0..lines-1
+			   if @E2[c] == "1" and @E4[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
 		when "E3E4"
+			for c in 0..lines-1
+			   if @E3[c] == "1" and @E4[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
 		when "E1Sx"
 			for c in 0..lines-1
 			   if @E1[c] == "1" and sx[c] == "1" 
@@ -815,6 +885,15 @@ def f_and(valores,bits,entradas)
 			puts sd
 			return sd
 		when "E4Sx"
+			for c in 0..lines-1
+			   if @E4[c] == "1" and sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
 		when "SS"
 			aux_x = []
 			aux_y = []
@@ -840,6 +919,181 @@ def f_and(valores,bits,entradas)
 			return sd
 		end
 	when 5
+		case params
+		when "E1E2"
+			for c in 0..lines-1
+			   if @E1[c] == "1" and @E2[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1E3"
+			for c in 0..lines-1
+			   if @E1[c] == "1" and @E3[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1E4"
+			for c in 0..lines-1
+			   if @E1[c] == "1" and @E4[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1E5"
+			for c in 0..lines-1
+			   if @E1[c] == "1" and @E5[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2E3"
+			for c in 0..lines-1
+			   if @E2[c] == "1" and @E3[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2E4"
+			for c in 0..lines-1
+			   if @E2[c] == "1" and @E4[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2E5"
+			for c in 0..lines-1
+			   if @E2[c] == "1" and @E5[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E3E4"
+			for c in 0..lines-1
+			   if @E3[c] == "1" and @E4[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E3E5"
+			for c in 0..lines-1
+			   if @E3[c] == "1" and @E5[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E4E5"
+			for c in 0..lines-1
+			   if @E4[c] == "1" and @E5[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1Sx"
+			for c in 0..lines-1
+			   if @E1[c] == "1" and sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2Sx"
+			for c in 0..lines-1
+			   if @E2[c] == "1" and sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E3Sx"
+			for c in 0..lines-1
+			   if @E3[c] == "1" and sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E4Sx"
+			for c in 0..lines-1
+			   if @E4[c] == "1" and sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E5Sx"
+			for c in 0..lines-1
+			   if @E5[c] == "1" and sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "SS"
+			aux_x = []
+			aux_y = []
+			for x in 0..1
+				if x == 0 
+					@XY[x].each do |bit|
+						aux_x << bit
+					end
+				else
+					@XY[x].each do |bit|
+						aux_y << bit
+					end	
+				end
+			end
+			for c in 0..lines-1
+			   if aux_x[c] == "1" and aux_y[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		end
 	end		
 end
 
@@ -879,7 +1133,7 @@ def f_or(valores,bits,entradas)
 			end
 			puts sd
 			return sd
-		when "E1Sx" 
+		when "E1Sx"
 			for c in 0..lines-1
 			   if @E1[c] == "1" or sx[c] == "1" 
 			   		sd << "1"
@@ -937,7 +1191,6 @@ def f_or(valores,bits,entradas)
 			end
 			puts sd
 			return sd
-
 		when "E1E3"
 			for c in 0..lines-1
 			   if @E1[c] == "1" or @E3[c] == "1" 
@@ -948,7 +1201,6 @@ def f_or(valores,bits,entradas)
 			end
 			puts sd
 			return sd
-
 		when "E2E3"
 			for c in 0..lines-1
 			   if @E2[c] == "1" or @E3[c] == "1" 
@@ -959,7 +1211,6 @@ def f_or(valores,bits,entradas)
 			end
 			puts sd
 			return sd
-
 		when "E1Sx" 
 			for c in 0..lines-1
 			   if @E1[c] == "1" or sx[c] == "1" 
@@ -995,7 +1246,6 @@ def f_or(valores,bits,entradas)
 			aux_y = []
 			for x in 0..1
 				if x == 0 
-					puts "entrei"
 					@XY[x].each do |bit|
 						aux_x << bit
 					end
@@ -1005,9 +1255,6 @@ def f_or(valores,bits,entradas)
 					end	
 				end
 			end
-			puts "#{aux_x}"
-
-
 			for c in 0..lines-1
 			   if aux_x[c] == "1" or aux_y[c] == "1" 
 			   		sd << "1"
@@ -1019,12 +1266,311 @@ def f_or(valores,bits,entradas)
 			return sd
 		end
 	when 4
+		case params
+		when "E1E2"
+			for c in 0..lines-1
+			   if @E1[c] == "1" or @E2[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1E3"
+			for c in 0..lines-1
+			   if @E1[c] == "1" or @E3[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1E4"
+			for c in 0..lines-1
+			   if @E1[c] == "1" or @E4[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2E3"
+			for c in 0..lines-1
+			   if @E2[c] == "1" or @E3[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2E4"
+			for c in 0..lines-1
+			   if @E2[c] == "1" or @E4[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E3E4"
+			for c in 0..lines-1
+			   if @E3[c] == "1" or @E4[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1Sx"
+			for c in 0..lines-1
+			   if @E1[c] == "1" or sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2Sx"
+			for c in 0..lines-1
+			   if @E2[c] == "1" or sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E3Sx"
+			for c in 0..lines-1
+			   if @E3[c] == "1" or sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E4Sx"
+			for c in 0..lines-1
+			   if @E4[c] == "1" or sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "SS"
+			aux_x = []
+			aux_y = []
+			for x in 0..1
+				if x == 0 
+					@XY[x].each do |bit|
+						aux_x << bit
+					end
+				else
+					@XY[x].each do |bit|
+						aux_y << bit
+					end	
+				end
+			end
+			for c in 0..lines-1
+			   if aux_x[c] == "1" or aux_y[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		end
 	when 5
+		case params
+		when "E1E2"
+			for c in 0..lines-1
+			   if @E1[c] == "1" or @E2[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1E3"
+			for c in 0..lines-1
+			   if @E1[c] == "1" or @E3[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1E4"
+			for c in 0..lines-1
+			   if @E1[c] == "1" or @E4[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1E5"
+			for c in 0..lines-1
+			   if @E1[c] == "1" or @E5[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2E3"
+			for c in 0..lines-1
+			   if @E2[c] == "1" or @E3[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2E4"
+			for c in 0..lines-1
+			   if @E2[c] == "1" or @E4[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2E5"
+			for c in 0..lines-1
+			   if @E2[c] == "1" or @E5[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E3E4"
+			for c in 0..lines-1
+			   if @E3[c] == "1" or @E4[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E3E5"
+			for c in 0..lines-1
+			   if @E3[c] == "1" or @E5[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E4E5"
+			for c in 0..lines-1
+			   if @E4[c] == "1" or @E5[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1Sx"
+			for c in 0..lines-1
+			   if @E1[c] == "1" or sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2Sx"
+			for c in 0..lines-1
+			   if @E2[c] == "1" or sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E3Sx"
+			for c in 0..lines-1
+			   if @E3[c] == "1" or sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E4Sx"
+			for c in 0..lines-1
+			   if @E4[c] == "1" or sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "E5Sx"
+			for c in 0..lines-1
+			   if @E5[c] == "1" or sx[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		when "SS"
+			aux_x = []
+			aux_y = []
+			for x in 0..1
+				if x == 0 
+					@XY[x].each do |bit|
+						aux_x << bit
+					end
+				else
+					@XY[x].each do |bit|
+						aux_y << bit
+					end	
+				end
+			end
+			for c in 0..lines-1
+			   if aux_x[c] == "1" or aux_y[c] == "1" 
+			   		sd << "1"
+			   else
+			   		sd << "0"
+			   end
+			end
+			puts sd
+			return sd
+		end
 	end
 end
 
 def f_xor(valores,bits,entradas)
-	aux = 0
 	#case bits
 	sd = [] # array de saida
 	sx = [] # array no caso de montantes Sx
@@ -1060,7 +1606,7 @@ def f_xor(valores,bits,entradas)
 			end
 			puts sd
 			return sd
-		when "E1Sx" 
+		when "E1Sx"
 			for c in 0..lines-1
 			   	if (@E1[c] == "1" and sx[c] == "1") or (@E1[c] == "0" and sx[c] == "0")
 		   			sd << "0"
@@ -1117,7 +1663,6 @@ def f_xor(valores,bits,entradas)
 			end
 			puts sd
 			return sd
-
 		when "E1E3"
 			for c in 0..lines-1
 			   if (@E1[c] == "1" and @E3[c] == "1") or (@E1[c] == "0" and @E3[c] == "0")
@@ -1128,7 +1673,6 @@ def f_xor(valores,bits,entradas)
 			end
 			puts sd
 			return sd
-
 		when "E2E3"
 			for c in 0..lines-1
 			   if (@E3[c] == "1" and @E2[c] == "1") or (@E2[c] == "0" and @E3[c] == "0")
@@ -1139,8 +1683,7 @@ def f_xor(valores,bits,entradas)
 			end
 			puts sd
 			return sd
-
-		when "E1Sx" 
+		when "E1Sx"
 			for c in 0..lines-1
 			   if (@E1[c] == "1" and sx[c] == "1") or (@E1[c] == "0" and sx[c] == "0")
 			   		sd << "0"
@@ -1197,7 +1740,301 @@ def f_xor(valores,bits,entradas)
 			return sd
 		end
 	when 4
+		case params
+		when "E1E2"
+			for c in 0..lines-1
+			   if (@E1[c] == "1" and @E2[c] == "1") or (@E2[c] == "0" and @E1[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1E3"
+			for c in 0..lines-1
+			   if (@E1[c] == "1" and @E3[c] == "1") or (@E1[c] == "0" and @E3[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1E4"
+			for c in 0..lines-1
+			   if (@E1[c] == "1" and @E4[c] == "1") or (@E1[c] == "0" and @E4[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2E3"
+			for c in 0..lines-1
+			   if (@E3[c] == "1" and @E2[c] == "1") or (@E2[c] == "0" and @E3[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2E4"
+			for c in 0..lines-1
+			   if (@E2[c] == "1" and @E4[c] == "1") or (@E2[c] == "0" and @E4[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E3E4"
+			for c in 0..lines-1
+			   if (@E3[c] == "1" and @E4[c] == "1") or (@E3[c] == "0" and @E4[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1Sx"
+			for c in 0..lines-1
+			   if (@E1[c] == "1" and sx[c] == "1") or (@E1[c] == "0" and sx[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2Sx"
+			for c in 0..lines-1
+			   if (@E2[c] == "1" and sx[c] == "1") or (@E2[c] == "0" and sx[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E3Sx"
+			for c in 0..lines-1
+			   if (@E3[c] == "1" and sx[c] == "1") or (@E3[c] == "0" and sx[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E4Sx"
+			for c in 0..lines-1
+			   if (@E4[c] == "1" and sx[c] == "1") or (@E4[c] == "0" and sx[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		else
+			aux_x = []
+			aux_y = []
+			for x in 0..1
+				if x == 0 
+					puts "entrei"
+					@XY[x].each do |bit|
+						aux_x << bit
+					end
+				else
+					@XY[x].each do |bit|
+						aux_y << bit
+					end	
+				end
+			end
+
+			for c in 0..lines-1
+			   if (aux_x[c] == "1" and aux_y[c] == "1") or (aux_x[c] == "0" and aux_y[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		end
 	when 5
+		case params
+		when "E1E2"
+			for c in 0..lines-1
+			   if (@E1[c] == "1" and @E2[c] == "1") or (@E2[c] == "0" and @E1[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1E3"
+			for c in 0..lines-1
+			   if (@E1[c] == "1" and @E3[c] == "1") or (@E1[c] == "0" and @E3[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1E4"
+			for c in 0..lines-1
+			   if (@E1[c] == "1" and @E4[c] == "1") or (@E1[c] == "0" and @E4[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1E5"
+			for c in 0..lines-1
+			   if (@E1[c] == "1" and @E5[c] == "1") or (@E1[c] == "0" and @E5[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2E3"
+			for c in 0..lines-1
+			   if (@E3[c] == "1" and @E2[c] == "1") or (@E2[c] == "0" and @E3[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2E4"
+			for c in 0..lines-1
+			   if (@E2[c] == "1" and @E4[c] == "1") or (@E2[c] == "0" and @E4[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2E5"
+			for c in 0..lines-1
+			   if (@E2[c] == "1" and @E5[c] == "1") or (@E2[c] == "0" and @E5[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E3E4"
+			for c in 0..lines-1
+			   if (@E3[c] == "1" and @E4[c] == "1") or (@E3[c] == "0" and @E4[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E3E5"
+			for c in 0..lines-1
+			   if (@E3[c] == "1" and @E5[c] == "1") or (@E3[c] == "0" and @E5[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E1Sx"
+			for c in 0..lines-1
+			   if (@E1[c] == "1" and sx[c] == "1") or (@E1[c] == "0" and sx[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E2Sx"
+			for c in 0..lines-1
+			   if (@E2[c] == "1" and sx[c] == "1") or (@E2[c] == "0" and sx[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E3Sx"
+			for c in 0..lines-1
+			   if (@E3[c] == "1" and sx[c] == "1") or (@E3[c] == "0" and sx[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E4Sx"
+			for c in 0..lines-1
+			   if (@E4[c] == "1" and sx[c] == "1") or (@E4[c] == "0" and sx[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		when "E5Sx"
+			for c in 0..lines-1
+			   if (@E5[c] == "1" and sx[c] == "1") or (@E5[c] == "0" and sx[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		else
+			aux_x = []
+			aux_y = []
+			for x in 0..1
+				if x == 0 
+					puts "entrei"
+					@XY[x].each do |bit|
+						aux_x << bit
+					end
+				else
+					@XY[x].each do |bit|
+						aux_y << bit
+					end	
+				end
+			end
+
+			for c in 0..lines-1
+			   if (aux_x[c] == "1" and aux_y[c] == "1") or (aux_x[c] == "0" and aux_y[c] == "0")
+			   		sd << "0"
+			   else
+			   		sd << "1"
+			   end
+			end
+			puts sd
+			return sd
+		end
 	end
 end
 
@@ -1268,11 +2105,161 @@ def f_not(valores,bits,entradas)
 			return sd
 		end
 	when 3
-
+		if params == "nE1" 
+			for c in 0..lines-1
+				if @E1[c] == "1"
+					sd << "0"
+				else
+					sd << "1"
+				end
+			end
+			puts sd
+			return sd
+		elsif params == "nE2" 
+			for c in 0..lines-1
+				if @E2[c] == "1"
+					sd << "0"
+				else
+					sd << "1"
+				end
+			end	
+			puts sd
+			return sd
+		elsif params == "nE3" 
+			for c in 0..lines-1
+				if @E3[c] == "1"
+					sd << "0"
+				else
+					sd << "1"
+				end
+			end	
+			puts sd
+			return sd		
+		elsif params.include? "nS" 
+			for c in 0..lines-1
+				if sx[c] == "1"
+					sd << "0"
+				else
+					sd << "1"
+				end
+			end	
+			puts sd
+			return sd
+		end
 	when 4
-
+		if params == "nE1" 
+			for c in 0..lines-1
+				if @E1[c] == "1"
+					sd << "0"
+				else
+					sd << "1"
+				end
+			end
+			puts sd
+			return sd
+		elsif params == "nE2" 
+			for c in 0..lines-1
+				if @E2[c] == "1"
+					sd << "0"
+				else
+					sd << "1"
+				end
+			end	
+			puts sd
+			return sd
+		elsif params == "nE3" 
+			for c in 0..lines-1
+				if @E3[c] == "1"
+					sd << "0"
+				else
+					sd << "1"
+				end
+			end	
+			puts sd
+			return sd		
+		elsif params == "nE4" 
+			for c in 0..lines-1
+				if @E4[c] == "1"
+					sd << "0"
+				else
+					sd << "1"
+				end
+			end	
+			puts sd
+			return sd		
+		elsif params.include? "nS" 
+			for c in 0..lines-1
+				if sx[c] == "1"
+					sd << "0"
+				else
+					sd << "1"
+				end
+			end	
+			puts sd
+			return sd
+		end
 	else
-
+		if params == "nE1" 
+			for c in 0..lines-1
+				if @E1[c] == "1"
+					sd << "0"
+				else
+					sd << "1"
+				end
+			end
+			puts sd
+			return sd
+		elsif params == "nE2" 
+			for c in 0..lines-1
+				if @E2[c] == "1"
+					sd << "0"
+				else
+					sd << "1"
+				end
+			end	
+			puts sd
+			return sd
+		elsif params == "nE3" 
+			for c in 0..lines-1
+				if @E3[c] == "1"
+					sd << "0"
+				else
+					sd << "1"
+				end
+			end	
+			puts sd
+			return sd		
+		elsif params == "nE4" 
+			for c in 0..lines-1
+				if @E4[c] == "1"
+					sd << "0"
+				else
+					sd << "1"
+				end
+			end	
+			puts sd
+			return sd		
+		elsif params == "nE5" 
+			for c in 0..lines-1
+				if @E5[c] == "1"
+					sd << "0"
+				else
+					sd << "1"
+				end
+			end	
+			puts sd
+			return sd		
+		elsif params.include? "nS" 
+			for c in 0..lines-1
+				if sx[c] == "1"
+					sd << "0"
+				else
+					sd << "1"
+				end
+			end	
+			puts sd
+			return sd
+		end
 	end
 end
 
@@ -1329,7 +2316,6 @@ def f_montante_sx(entradas)
 		return @Sx[tamanho]
 	
 	else
-		puts "entrei"
 	 	posição_y = entradas[entradas.size-1]
 		#puts entradas[entradas.size-1]
 		posição_x = entradas[entradas.size-3]
