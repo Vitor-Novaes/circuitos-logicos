@@ -374,7 +374,7 @@ def f_verifica_entradas(text_line,valores)
 				end
 			end
 			aux3 = 0
-			entradas << "E2S"
+			entradas << "E3S"
 			entradas << text_line[entrada_buf-1]
 			return entradas
 		elsif text_line.include? ",S" and text_line.include? "(S" #(Sx,Sy)
@@ -573,7 +573,8 @@ def f_operações_lógicas(tverdade,text_content,valores,bits)
 								#f_write(tverdade,@bits,montante)
 							else
 								if text_content[c].include? "F =" #OKAY
-									entradas = "F ="
+									entradas = text_content[c]
+									puts "Saida : #{entradas} \n"
 									resultante = f_montante_sx(entradas)
 									f_write(tverdade,@bits,resultante)
 								else
@@ -584,8 +585,7 @@ def f_operações_lógicas(tverdade,text_content,valores,bits)
 					end
 				end
 			end
-		end#Constroi tabela verdade
-
+		end
 	end
 end
 
@@ -2312,9 +2312,23 @@ def f_montante_sx(entradas)
 		return @Sx[posição.to_i-1]
 
 	elsif entradas.include? "F ="
-		tamanho = @Sx.size-1
-		return @Sx[tamanho]
-	
+		if entradas.include? "S"
+			saida = entradas[entradas.size-3]
+			return @Sx[saida.to_i-1]
+		else
+			case entradas[entradas.size-3]
+			when "1"
+				return @E1
+			when "2"
+				return @E2
+			when "3"
+				return @E3
+			when "4"
+				return @E4
+			when "5"
+				return @E5
+			end						
+		end	
 	else
 	 	posição_y = entradas[entradas.size-1]
 		#puts entradas[entradas.size-1]
