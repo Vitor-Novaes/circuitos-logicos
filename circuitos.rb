@@ -86,8 +86,6 @@ def f_five_bits
 	tverdade
 end
 
-
-
 #gera tabela verdade de acordo com os bits
 def f_gera_tv(bits)
 	tverdade = []
@@ -519,7 +517,6 @@ def f_verifica_entradas(text_line,valores)
 		end
 	end
 end
-
 
 def f_operações_lógicas(tverdade,text_content,valores,bits)
 	# analisando e chamando operações lógicas
@@ -2038,7 +2035,6 @@ def f_xor(valores,bits,entradas)
 	end
 end
 
-#OBS: somente pra 1 BIT
 def f_not(valores,bits,entradas)
 	#case bits
 	sd = [] # array de saida

@@ -28,32 +28,47 @@ end
 def f_write(tverdade,bits,resultante)
 case @bits
 when '1'
-	saida = "E1 F
+	saida = "|E1| F |
+========
 "	
 when '2'
-	saida = "E1 E2 F
+	saida = "|E1 E2| F |
+===========
 "
 when '3'
-	saida = "E1 E2 E3 F
+	saida = "|E1 E2 E3| F |
+==============
 "
 when '4'
-	saida = "E1 E2 E3 E4 F
+	saida = "|E1 E2 E3 E4  | F |
+===================
 "
 else
-	saida = "E1 E2 E3 E4 E5 F
+	saida = "|E1 E2 E3 E4 E5  | F |
+======================
 "	
 end
 	
 	for line in 0..tverdade.size-1
+		saida << "|"
 		saida << tverdade[line].to_s
-		saida << " = "
+		saida << " | "
 		saida << resultante[line].to_s
-		saida << "
+		saida << " |
 "
 	end
 
+	text = []
+	text = f_read
+	saida << " 
+"
+		saida << "Função lógica :
+"
+	for line in 1..text.size-1
+
+		saida << text[line]
+	end
 
 #escreve a função booleana
-
 	File.write "out.txt",saida
 end
