@@ -1,0 +1,26 @@
+%Aqui está um exemplo de arquivo texto de entrada. Tente desenhar o circuito.
+%Linhas iniciando com % são linhas de comentários. 
+%A primeira linha não comentário contém o número de entradas externas e o número de portas lógicas do circuito.
+%
+3, 5
+%
+%Em seguida vem a lista de portas com suas conexões. S1 é a saida da porta k, Ej é a entrada externa j.
+%A saída do circuito é sempre indicada pela letra F.
+%
+%Atenção Obrigatório : Espaço depois do igual, o Ej da entrada,
+% USE sempre letras maiúsculas e termine com um ponto e vígula
+%
+S1 = XOR(E1,E2);
+S2 = XOR(E3,S1);
+S3 = AND(E1,E2);
+S4 = AND(E3,S1);
+S5 = OR(S3,S4);
+F = S5;
+%F = S2;
+% SAÍDA (Cout) DO CIRCUITO
+%
+%
+% A especificação das falhas é direta, indicando quais entradas ou saidas estão presas a 0 ou %a 1. 
+% Para especificar falahas nas entrada precisamos definir que Ijk é a entrada j da porta k. Por exemplo:
+%S1 = 1;
+%I22 = 0;
